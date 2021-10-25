@@ -1,3 +1,5 @@
+'use strict'
+
 const {Consumer} = require('sqs-consumer');
 
 const { APIClient } = require('./clientVars.js')

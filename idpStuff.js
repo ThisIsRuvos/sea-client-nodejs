@@ -1,3 +1,5 @@
+'use strict'
+
 const axios = require('axios')
 const qs = require('qs')
 const { APIClient } = require('./clientVars.js')
@@ -31,7 +33,7 @@ const idpCredentials = async () => {
         //console.log('Data From idpCredentials', data.data['access_token'])
         return data.data['access_token']
     } catch (e) {
-        console.log('ERROR IN idpCredentials',e)
+        //console.log('ERROR IN idpCredentials',e)
         return 'Credential error'
     }
     

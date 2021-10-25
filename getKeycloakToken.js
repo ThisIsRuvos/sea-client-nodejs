@@ -1,3 +1,5 @@
+'use strict'
+
 const {decodeToken, idpCredentials} = require('./idpStuff')
 
 async function main() {
