@@ -76,19 +76,20 @@ async function main() {
             SSEKMSKeyId: kmskey,
             Metadata
         }
-
+        //console.log('Put params: ', putParams)
         const S3 = new AWS.S3()
         try {
             console.log('Uploading file...')
             const data = await S3.upload(putParams, function(err, data) {
                 readStream.destroy();              
                 if (err) {
-                  throw err;
+                    console.log('Upload error:',err)
+                    throw err;
                 }
                 console.log('File upload complete: ',FileName)
               });
         } catch (e) {
-            console.log('Error at upload', e)
+            console.log('Error at upload')
         }    
     }
 }
