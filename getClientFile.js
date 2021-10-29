@@ -55,8 +55,7 @@ async function main() {
     } catch(e) {
         console.log('getCallerIdentity error',e)
     }
-    console.log('Swap access token for AWS Cognito Credentials:',data1) 
-    //console.log('Swap access token for AWS Cognito Credentials.')
+    console.log('Swap access token for AWS Cognito Credentials.')
 
     if (data1) {
         const Key = `${seaClientId}/inbound/${KeyID}`
