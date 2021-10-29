@@ -70,6 +70,11 @@ async function main() {
             if (typeof message.Body !== "undefined") {
                 const deliveryMessage = JSON.parse(JSON.parse(message.Body).Message)
 
+                if (!(deliveryMessage.Records && deliveryMessage.Records.length && deliveryMessage.Records[0].s3)) {
+                    console.dir(deliveryMessage, { depth: null, colors: true })
+                    return
+                }
+
                 const objectKey = deliveryMessage.Records[0].s3.object.key
                 const bucketName = deliveryMessage.Records[0].s3.bucket.name
                 const clientName = APIClient.clientName
