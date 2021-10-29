@@ -55,7 +55,6 @@ async function main() {
     } catch(e) {
         console.log('getCallerIdentity error',e)
     }
-    //console.log('Swap access token for AWS Cognito Credentials:',data1) 
     console.log('Swap access token for AWS Cognito Credentials.')
 
     if (data1) {
@@ -64,33 +63,42 @@ async function main() {
             Bucket: clientS3Bucket,
             Key,
         }
+        console.log('getParams:',getParams)
         const S3 = new AWS.S3()
         // first get header info for file name
         let fileSummary;
         let filename;
         try {
+            console.log('Retrieve file summary')
             fileSummary = await S3.headObject(getParams).promise()
+            console.log('fileSummary:',fileSummary)
             filename = fileSummary.Metadata.filename
           } catch (error) {
             if (error.statusCode === 404) {
               console.log('File Not Found')
             }
         }
-        let file
-        try {
-            file = fs.createWriteStream(`./files/inbound/${filename}`);
-        } catch (e) {
-            console.log('Error at create stream', e)
-        }
-        if (typeof file!== "undefined") {
-            console.log('Downloading file...')
+        if (typeof filename !== "undefined") {
+            let file
             try {
-                await S3.getObject(getParams).createReadStream().pipe(file);
-                console.log(`File download complete: ${filename}`)
+                file = fs.createWriteStream(`./files/inbound/${filename}`);
             } catch (e) {
-                console.log('Error at s3GetObject', e)
+                console.log('Error at create stream', e)
             }
-
+            if (typeof file!== "undefined") {
+                console.log('Downloading file...')
+                try {
+                    await S3.getObject(getParams).createReadStream().pipe(file);
+                    console.log(`File download complete: ${filename}`)
+                } catch (e) {
+                    console.log('Error at s3GetObject', e)
+                }
+    
+            } else {
+                console.log('Error: File is undefined.')
+            }
+        } else {
+            console.log('Error: Filename not retrieved.')
         }
     
     }
