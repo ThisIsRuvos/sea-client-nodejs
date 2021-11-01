@@ -30,7 +30,7 @@ Follow the instructions on Github to clone this repository to your development c
 ```
 mkdir files/inbound
 ```
-*Note: commands in this document assume a Linux host machine or use of a linux based command shell.*
+*Note: commands in this document assume a Linux host machine or use of a Linux-based command shell.*
 
 Use the above information to populate a secrets file that will be used by the functions in this repository. Create a secrets.json file from the provided example:
 
