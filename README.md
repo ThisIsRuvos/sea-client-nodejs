@@ -19,7 +19,7 @@ As stated in the document, client configuration is required for the example code
 - AWS S3 bucket
 - AWS KMS encryption key / alias
 - AWS SQS endpoint for new message polling
-- AWS Cognito identify pool Id
+- AWS Cognito identity pool Id
 
 Use this information to complete your local setup.  Then follow the test document steps to run through the different process flows. 
 
