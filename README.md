@@ -72,10 +72,10 @@ Use either SWAGGER UI mailbox routes or data from the below SQS Queue Monitoring
 
 **Download the file**
 
-Use the file key ID to download the target file.  The bucket is incorporated in the below commmand.
+Use the file key ID to download the target file.  The bucket is incorporated in the function via the `secrets.json`.
 
 ```
-node getClientFile -k <just the name part of the key, not the folders>
+node getClientFile -k <just the id part of the key, not the folders>
 ```
 *Example: node getClientFile -k d6e5c6f7-f537-4cf7-bc3a-3d8f7800969a*
 
@@ -91,4 +91,4 @@ To monitor for incoming files, open a separate terminal window and run:
 node s3CreateEventSqsPoller
 ```
 
-When a file is sent to a mailbox being monitored by this client, a message will be displayed with the command to download the file.
+When a file is sent to a mailbox being monitored by this client, a message will be displayed with the command to download the file. 
