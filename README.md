@@ -10,7 +10,7 @@ The STEVE External API service includes a [Swagger UI](https://swagger.io/tools/
 
 In order to take advantage of the example code provided in this repository, use the STEVE External API Testing Instructions document as the primary guide to understand process flows, when to use SWAGGER UI routes, and how the example code fits within those processes.
 
-As stated in the document, client configuration is required for the example code to function. Upon creation of your client resources, the following information is required:
+As stated in the document, client configuration is required for the example code to function. Upon creation of your client resources, the following information will be provided:
 
 - Swagger UI URL
 - Client name
@@ -73,7 +73,7 @@ node getClientFile -k <just the name part of the key, not the folders>
 ```
 *Example: node getClientFile -k d6e5c6f7-f537-4cf7-bc3a-3d8f7800969a*
 
-**Mark inbox record read**
+**Mark inbox record READ**
 
 Use the SWAGGER UI inbox route
 
