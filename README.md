@@ -60,7 +60,7 @@ node putClientFile -f <filename> -t <transactionId>
 
 **Close transaction / Check status**
 
-Use the SWAGGER UI close transaction route
+Use the SWAGGER UI Close transaction route
 
 ### Receiving Files
 
@@ -81,7 +81,7 @@ node getClientFile -k <just the name part of the key, not the folders>
 
 **Mark inbox record READ**
 
-Use the SWAGGER UI inbox route
+Use the SWAGGER UI Inbox route
 
 ### Monitoring for Incoming Files
 
