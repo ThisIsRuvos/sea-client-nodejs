@@ -25,12 +25,18 @@ Use this information to complete your local setup.  Then follow the test documen
 
 ## Test Setup
 
+Follow the instructions on Github to clone this repository to your development computer.  When complete, it may be necessary to create an empty folder to receive files.  From the root of the repository:
+
+```
+mkdir files/inbound
+```
+*Note: commands in this document assume a Linux host machine or use of a linux based command shell.*
+
 Use the above information to populate a secrets file that will be used by the functions in this repository. Create a secrets.json file from the provided example:
 
 ```
 cp secrets-sample.json secrets.json
 ```
-*Note: commands in this document assume a Linux host machine or use of a linux based command shell.*
 
 ## Testing
 
