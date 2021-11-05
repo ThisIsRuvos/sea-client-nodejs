@@ -23,6 +23,28 @@ As stated in the document, client configuration is required for the example code
 
 Use this information to complete your local setup.  Then follow the test document steps to run through the different process flows. 
 
+**NodeJS Setup**
+
+Install NodeJS if not already present (linux examples):
+
+```
+apt-get update
+apt-get install -y nodejs
+```
+
+Check the Node version:
+
+```
+node --version
+```
+
+If the node version is less than 12, install the `n` package, then upgrade Node:
+
+```
+npm install -g n
+n latest
+```
+
 ## Test Setup
 
 Follow the instructions on Github to clone this repository to your development computer.  When complete, it may be necessary to create an empty folder to receive files.  From the root of the repository:
@@ -72,7 +94,7 @@ Use either SWAGGER UI mailbox routes or data from the below SQS Queue Monitoring
 
 **Download the file**
 
-Use the file key ID to download the target file.  The bucket is incorporated in the function via the `secrets.json`.
+Use the file key ID to download the target file.  The bucket is incorporated in the bearer token.
 
 ```
 node getClientFile -k <just the id part of the key, not the folders>

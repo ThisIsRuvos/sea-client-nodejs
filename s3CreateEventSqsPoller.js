@@ -3,7 +3,7 @@
 const {Consumer} = require('sqs-consumer');
 
 const { APIClient } = require('./clientVars.js')
-const {decodeToken, idpCredentials} = require('./idpStuff')
+const {idpCredentials} = require('./idpStuff')
 const AWS = require('aws-sdk');
 
 AWS.config.region = 'us-east-1'
