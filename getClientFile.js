@@ -4,9 +4,7 @@ const yargs = require('yargs/yargs')
 const { hideBin } = require('yargs/helpers')
 const AWS = require('aws-sdk')
 const axios = require('axios')
-const qs = require('qs')
 const fs = require('fs')
-const { v4: uuid } = require('uuid')
 const {decodeToken, idpCredentials} = require('./idpStuff')
 const { APIClient } = require('./clientVars.js')
 
@@ -37,7 +35,6 @@ async function main() {
     const KeyID = argv.key
     const loginAddress = APIClient.keycloakAddress
     const idp = APIClient.cognitoIdentityPoolID
-    const kmskey = APIClient.seaBucketKMSKey
     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
         IdentityPoolId: idp,
         Logins: {
