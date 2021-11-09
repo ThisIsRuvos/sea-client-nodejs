@@ -91,4 +91,11 @@ To monitor for incoming files, open a separate terminal window and run:
 node s3CreateEventSqsPoller
 ```
 
-When a file is sent to a mailbox being monitored by this client, a message will be displayed with the command to download the file. 
+When a file is sent to a mailbox being monitored by this client, a message will be displayed with the command to download the file.
+
+### To mark files read
+
+This route is for marking files as read. This occurs after a file has been downloaded from S3.
+```shell script
+node markFileRead.js -m <messageId>
+``` 
