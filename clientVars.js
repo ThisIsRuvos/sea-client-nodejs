@@ -10,6 +10,7 @@ const clientName = nconf.get('clientName')
 const clientSecretKey = nconf.get('clientSecretKey')
 const seaBucketKMSKey = nconf.get('seaBucketKMSKey')
 const steveOutputBucketQueueUrl = nconf.get('steveOutputBucketQueueUrl')
+const seaBaseUrl = nconf.get('seaBaseUrl')
 
 /* Placeholder for service implementation, using env vars
 const cognitoIdentityPoolID = process.env.AWS_COGNITO_IDENTITY_POOL || 'zzz'
@@ -26,7 +27,8 @@ const APIClient = {
     clientName,
     clientSecretKey,
     seaBucketKMSKey,
-    steveOutputBucketQueueUrl  
+    steveOutputBucketQueueUrl,
+    seaBaseUrl
 }
 
 module.exports = {APIClient}
