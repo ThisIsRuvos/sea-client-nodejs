@@ -1,0 +1,152 @@
+#!/bin/bash
+
+#include
+. checkForCRFolder
+
+#Bold colors
+BWHITE='\033[1;37m'
+BGREEN='\033[1;32m'
+BRED='\033[1;31m'
+BYELLOW='\033[1;33m'
+BBLUE='\033[1;34m'
+UBLUE='\033[4;34m'
+NC='\033[0m' # No color
+
+#create listFiles variable
+listFiles="$(ls -d clientResourcesFolder/*essages.json 2>&1)"
+lsError=$(cut -d ':' -f3 <<< $listFiles)
+
+#Message ID and markRead variable
+messageId=
+fileRead=false
+markRead=""
+skipMarkReadLoop="n"
+
+#Move to files directory
+cd files
+
+#Create listFolders array
+listFolders=($(ls -d */))
+folders=()
+
+#Remove / from end of folder name at each index in array and add to folders array
+for ((i=0; i<${#listFolders[@]}; i++)); do
+  folders+=(${listFolders[i]%?})
+done
+
+#Create variable for client resource folder to compare to folders array 
+inboundFolder="inbound"
+fileExists=false
+
+#Compare folder name at each index of folders array to see if inboundFolder name exists and
+#set fileExists to true if inboundFolder name exists and move back to sea-client-nodejs directory
+for ((i=0; i<${#folders[@]}; i++)); do
+  if [[ "${folders[$i]}" == "$inboundFolder" ]]
+  then
+    fileExists=true
+    cd ..
+  fi
+done
+
+#If fileExists is not true then make a directory with the inboundFolder name
+if [ $fileExists != true ]
+then
+  mkdir $inboundFolder
+  cd ..
+fi
+
+#Option for message ID
+while getopts ":m:" option; do
+   case $option in
+      m) # give mailboxId
+        messageId=$OPTARG
+        markRead="n"
+        skipMarkReadLoop="y"
+        while getopts r option; do
+          case $option in
+              r) # mark file as read
+                fileRead=true;;
+              \?) #Invalid option
+                echo -e "\n${BRED}ERROR: Invalid option\n${NC}"
+              exit;;
+          esac
+        done;;
+      \?) #Invalid option
+        echo -e "\n${BRED}ERROR: Invalid option\n${NC}"
+      exit;;
+   esac
+done
+
+#Check if error exists, display message to run command for getting unread messages if unreadMessages.json file does not exist
+if [[ "$lsError" == " No such file or directory" ]] && ! [[ $messageId ]]
+then
+  echo -e "\n${BWHITE}\"sea-client-nodejs/clientResourcesFolder/unreadMessages.json\"${BYELLOW} nor a date ranged message file currently exist to pull a ${BWHITE}messageId ${BYELLOW}from ${BBLUE}${UBLUE}please run one of the below commands to pull unread messages or date ranged messages for a ${NC}${BWHITE}messageId ${BBLUE}${UBLUE}before running this commmand again${NC}${BYELLOW}:"
+  echo -e "\n\n${BWHITE}Command: ${BGREEN}./curlGetUnread"
+  echo -e "\n\n${BWHITE}Command: ${BGREEN}./getMessagesByDateRange\n"
+  exit 1
+fi
+
+#While messageId variable empty prompt user of messageId
+while ! [ $messageId ]; do
+  read -p "$(echo -e "\n${BYELLOW}Please enter ${BWHITE}messageId${BYELLOW} of message you want to download from ${BWHITE}\"sea-client-nodejs/$checkFolder/unreadMessages.json\"${BYELLOW} OR from a date ranged file that you have within ${BWHITE}\"sea-client-nodejs/$checkFolder/\"${BYELLOW}:${NC} ")" messageId
+  echo -e "\n\n"
+done
+
+#Run getClientFile node function and set fileDownload variable to output
+fileDownload=$(node getClientFile -k $messageId)
+
+#Cut file name from output fileDownload string and remove the leading space
+downloadedFile=$(cut -d ':' -f30 <<< $fileDownload)
+downloadedFile=$(cut -c1- <<< $downloadedFile)
+
+catchError=$(cut -d ':' -f5 <<< $fileDownload)
+catchError=$(cut -c1- <<< $catchError)
+
+#If error exists in output of fileDownload display error message and example of command
+if [ "$catchError" == "Filename not retrieved." ]
+then
+  echo -e "\n${BRED}ERROR: You have entered an ${BWHITE}invalid messageId${BRED}! Please run one of the below commands again with a valid messageId."
+  echo -e "\n\n${BWHITE}Example without mark read option: ${BGREEN}./downloadFile -m <messageId>${NC}"
+  echo -e "\n\n${BWHITE}Example with mark read option: ${BGREEN}./downloadFile -m <messageId> -r${NC}"
+  echo -e "\n\n${BYELLOW}OR...${NC}"
+  echo -e "\n\n${BWHITE}Example: ${BGREEN}./downloadFile${NC}\n"
+
+  exit 1
+fi
+
+#Display location of downloaded file
+echo -e "\n\n${BGREEN}$downloadedFile has been downloaded to ${BWHITE}\"sea-client-nodejs/files/inbound/$downloadedFile\"${BGREEN}.${NC}\n\n\n"
+
+#While markRead is empty ask user for valid input
+notValid=
+while [ "$markRead" != "y" ] && [ "$markRead" != "n" ] && [ "$skipMarkReadLoop" == "n" ]; do
+  if [[ "$markRead" != "" ]] && [[ "$markRead" != "y" ]] && [[ "$markRead" != "n" ]] || [[ "$notValid" = 1 ]]
+  then
+    read -p "$(echo -e "${BRED}Please enter a valid reponse of ${BWHITE}y ${BRED}or ${BWHITE}n${BRED}: ${NC}")" markRead
+    echo -e "\n\n"
+    notValid=1
+  else
+    read -p "$(echo -e "\n${BYELLOW}Would you like to mark ${BWHITE}$downloadedFile${BYELLOW} as read ${BWHITE}(y/n)${BYELLOW}:${NC} ")" markRead
+    echo -e "\n\n"
+    notValid=1
+  fi
+done
+
+#If markRead is y then set fileRead boolean as true
+if [ "$markRead" == "y" ]
+then
+  fileRead=true
+elif  [ "$fileRead" = true ]
+then
+  doNothing=
+else
+  echo -e "${BBLUE}If you want to mark this file read in the future you can do so by running the below command:"
+  echo -e "\n\n${BWHITE}Command: ${BGREEN}./markAsRead -m $messageId${NC}\n"
+fi
+
+#If $fileRead boolean is true then markFile as read
+if [ "$fileRead" = true ]
+then
+  fileMarkedRead=$(node markFileRead -m $messageId)
+  echo -e "${BWHITE}$downloadedFile${BGREEN} has been marked as read.\n\n\n"
+fi

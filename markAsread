@@ -1,0 +1,63 @@
+#!/bin/bash
+
+. checkForCRFolder
+
+#Bold colors
+BWHITE='\033[1;37m'
+BGREEN='\033[1;32m'
+BRED='\033[1;31m'
+BYELLOW='\033[1;33m'
+BBLUE='\033[1;34m'
+UBLUE='\033[4;34m'
+NC='\033[0m' # No color
+
+#create listFiles variable
+listFiles="$(ls -d clientResourcesFolder/*essages.json 2>&1)"
+lsError=$(cut -d ':' -f3 <<< $listFiles)
+
+#Variable for messageId
+messageId=
+
+#Option for message ID
+while getopts ":m:" option; do
+   case $option in
+      m) # give mailboxId
+        messageId=$OPTARG;;
+      \?) #Invalid option
+        echo "ERROR: Invalid option"
+      exit;;
+   esac
+done
+
+#Check if error exists, display message to run command for getting unread messages or date ranged messages if unreadMessages.json or date ranged messages json file does not exist
+if [[ "$lsError" == " No such file or directory" ]] && ! [[ $messageId ]]
+then
+  echo -e "\n${BWHITE}\"sea-client-nodejs/clientResourcesFolder/unreadMessages.json\"${BYELLOW} nor a date ranged messages file currently exist to pull a ${BWHITE}messageId ${BYELLOW}from ${BBLUE}${UBLUE}please run one of the below commands to pull unread messages for a ${NC}${BWHITE}messageId ${BBLUE}${UBLUE}before running this commmand again${NC}${BYELLOW}:"
+  echo -e "\n\n${BWHITE}Command: ${BGREEN}./curlGetUnread\n"
+  echo -e "\n\n${BWHITE}Command: ${BGREEN}./getMessagesByDateRange\n"
+  exit 1
+fi
+
+#While messageId variable empty prompt user of messageId
+while ! [ $messageId ]; do
+  read -p "$(echo -e "\n${BYELLOW}Please enter ${BWHITE}messageId${BYELLOW} of message you want to mark as read from ${BWHITE}\"sea-client-nodejs/$checkFolder/unreadMessages.json\"${BYELLOW}:${NC} ")" messageId
+done
+
+#Set markAsRead variable to output of markFileRead command
+markAsRead=$(node markFileRead -m $messageId)
+
+#Set checkError variable to field 8 of cut string from markAsRead variable
+checkError=$(cut -d ' ' -f8 <<< $markAsRead)
+
+#See if Failed exists in checkError variable and if do display error message
+if [ "$checkError" == "Failed" ]
+then
+  echo -e "\n${BRED}ERROR: You have entered an ${BWHITE}invalid messageId${BRED}! Please run command again with a valid messageId."
+  echo -e "\n\n${BWHITE}Example: ${BGREEN}./markAsRead -m <messageId>${NC}\n"
+  echo -e $markAsRead
+  exit 1
+
+#Else display success message
+else
+  echo -e "\n\n\n${BGREEN}Successfully marked inbox record as read.${NC}\n\n\n"
+fi

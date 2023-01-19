@@ -1,4 +1,0 @@
-curl -X 'POST' \
-  'https://external-api.test.steve.naphsis.us/inbound/files/<mailboxID>' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Bearer iiiiiiiiiiiiiiii'

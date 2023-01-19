@@ -1,0 +1,82 @@
+#!/bin/bash
+
+#include
+. token
+. checkForCRFolder
+
+#Bold colors
+BWHITE='\033[1;37m'
+BGREEN='\033[1;32m'
+BRED='\033[1;31m'
+BYELLOW='\033[1;33m'
+NC='\033[0m' # No color
+
+#Option for file type
+while getopts ":f:" option; do
+   case $option in
+      f) # give file type
+        fileType=$OPTARG;;
+      \?) #Invalid option
+        echo "ERROR: Invalid option"
+      exit;;
+   esac
+done
+
+#Create array for outboundFileTypes and boolean for fileTypeExists
+outboundFileTypes=("BirthInfantDeath" "FetalDeath" "ITOP" "Mortality" "Natality" "Roster" "Other")
+fileTypeExists=false
+
+#While there is no user input ask for file type and set fileType variable to user input
+while ! [ $fileType ]; do 
+  read -p "$(echo -e "\n"${BYELLOW}"Please enter a valid File Type!\n\n${BGREEN}-BirthInfantDeath\n-FetalDeath\n-ITOP\n-Mortality\n-Natality\n-Roster\n-Other\n\n${BWHITE}File Type: "${NC})" fileType
+done
+
+#If user string matches "birthinfantdeath" change to "BirthInfantDeath" to avoid
+#error at check
+if [ "$fileType" = "birthinfantdeath" ]
+then
+  fileType="BirthInfantDeath"
+
+#elif user string matches "fetaldeath" change to "FetaltDeath" to avoid
+#error at check
+elif [ "$fileType" == "fetaldeath" ]
+then
+  fileType="FetalDeath"
+
+#elif user string matches "itop" change to "ITOP" to avoid
+#error at check
+elif [ "$fileType" == "itop" ]
+then
+  fileType="ITOP"
+
+#Else change first character to uppercase if lower case to avoid error at check
+else
+  fileType="$(tr '[:lower:]' '[:upper:]' <<< ${fileType:0:1})${fileType:1}"
+fi
+
+#Check if fileType matches any index in outboundFileTypes array and if it does set fileTypeExists to true 
+for ((i=0; i<${#outboundFileTypes[@]}; i++)); do
+  if [[ ${outboundFileTypes[$i]} == "$fileType" ]]
+  then
+    fileTypeExists=true
+  fi
+done
+
+#If fileType Exists is true then GET outbound routes and set outboundRoutes variable to output
+if [ $fileTypeExists = true ]
+then
+  outboundRoutes=$(curl -X 'GET' \
+  "https://external-api.test.steve.naphsis.us/outbound?fileType=$fileType" \
+  -H 'accept: application/json' \
+  -H "Authorization: Bearer $token")
+  
+  #Make json pretty and export to $checkFolder/outboundRoutes.json
+  echo $outboundRoutes | json_pp -json_opt pretty,canonical > $checkFolder/outboundRoutes.json
+
+  #Echo success statement and path to exported file
+  echo -e "${BGREEN}\nOutbound Routes have been exported to ${BWHITE}\"sea-client-nodejs/$checkFolder/outboundRoutes.json\"${BGREEN}.\n${NC}"
+
+#Else echo ERROR statement and list valid file types and example command
+else
+  echo -e "${BRED}\nERROR: That is an invalid File Type! Please run command again with a valid file type.\n\n${BYELLOW}############### Valid File Types ###############\n\n-BirthInfantDeath\n-FetalDeath\n-ITOP\n-Mortality\n-Natality\n-Roster\n-Other\n\n${BWHITE}Example: ${BGREEN}./curlGetOutboundRoutes -f Mortality\n"
+fi

@@ -1,0 +1,69 @@
+#!/bin/bash
+
+#include
+. token
+. checkForCRFolder
+
+BWHITE='\033[1;37m'
+BGREEN='\033[1;32m'
+BRED='\033[1;31m'
+BYELLOW='\033[1;33m'
+BBLUE='\033[1;34m'
+UBLUE='\033[4;34m'
+NC='\033[0m' # No color
+
+#create listFiles variable
+listFiles="$(ls clientResourcesFolder/mailboxList.json 2>&1)"
+lsError=$(cut -d ':' -f3 <<< $listFiles)
+
+#Option for mailbox ID
+while getopts ":m:" option; do
+   case $option in
+      m) # give mailboxId
+        mailboxId=$OPTARG;;
+      \?) #Invalid option
+        echo "ERROR: Invalid option"
+      exit;;
+   esac
+done
+
+#Check if error exists, display message to run command for getting unread messages if mailboxList.json file does not exist
+if [[ "$lsError" == " No such file or directory" ]] && ! [[ $mailboxId ]]
+then
+  echo -e "\n${BWHITE}\"sea-client-nodejs/clientResourcesFolder/mailboxList.json\"${BYELLOW} does not currently exist to pull a ${BWHITE}mailboxId ${BYELLOW}from ${BBLUE}${UBLUE}please run the below command to pull mailboxes associated with this client before running this commmand again${NC}${BYELLOW}:"
+  echo -e "\n\n${BWHITE}Command: ${BGREEN}./createMailboxListJSONFile\n"
+  exit 1
+fi
+
+#While mailboxId variable empty prompt user for input
+while ! [ $mailboxId ]; do 
+  read -p "$(echo -e "\n"${BYELLOW}"Please enter a valid mailbox ID from ${BWHITE}\"sea-client-nodejs/$checkFolder/mailboxList.json\"${BYELLOW}: "${NC})" mailboxId
+  echo -e "\n"
+done
+
+#POST to get unread messages from mailbox and set unreadMessages variable to output
+unreadMessages=$(curl -X 'POST' \
+  "https://external-api.test.steve.naphsis.us/inbound/files/$mailboxId" \
+  -H 'accept: application/json' \
+  -H "Authorization: Bearer $token")
+
+#Cut error message if it exists in field 4 with a delimeter of " and set errorMessage variable to output
+errorMessage=$(cut -d '"' -f4 <<< $unreadMessages)
+
+#If errorMessage string is equal to "mailboxId must be a uuid" then echo ERROR statement, display path to file the
+#mailbox IDs can be found in, give an example of how to run command with option, instruct how to create a 
+#mailboxList.json file and give command to create file
+if [ "$errorMessage" == "mailboxId must be a uuid" ]
+then
+  echo -e "\n${BRED}ERROR: That is an invalid mailbox ID!"
+  echo -e "\n\n${BYELLOW}Please run command again with a valid mailbox ID from ${BWHITE}\"sea-client-nodejs/$checkFolder/mailboxList.json\"${BYELLOW}."
+  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./curlGetUnread -m <mailboxId>\n${NC}"
+  echo -e "\n\n${BBLUE}${UBLUE}If ${NC}${BWHITE}\"sea-client-nodejs/$checkFolder/mailboxList.json\" ${UBLUE}does not currently exist then you can run the following command to generate it:"
+  echo -e "\n\n${NC}${BWHITE}Command: ${BGREEN}./createMailboxListJSONFile\n${NC}"
+  exit 1
+
+#Else make json pretty, export to unreadMessages.json file and display file path for messages
+else
+  echo $unreadMessages | json_pp -json_opt pretty,canonical > $checkFolder/unreadMessages.json
+  echo -e "\n${BGREEN}Unread messages have been exported to ${BWHITE}\"sea-client-nodejs/$checkFolder/unreadMessages.json\"${BGREEN}.\n"
+fi

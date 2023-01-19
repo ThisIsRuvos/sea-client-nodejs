@@ -1,12 +1,182 @@
-curl -X 'POST' \
+#!/bin/bash
+
+#include
+. token
+
+#Get contents of file for tranId variable
+tranId=$(cat transactionId)
+
+#Cut transaction id from tranId variable and set checkTranId to transaction id
+checkTranId=$(cut -d '=' -f2 <<< $tranId)
+
+#Bold colors
+BWHITE='\033[1;37m'
+BGREEN='\033[1;32m'
+BRED='\033[1;31m'
+BYELLOW='\033[1;33m'
+BBLUE='\033[1;34m'
+UBLUE='\033[4;34m'
+NC='\033[0m' # No color
+
+#Create options for outbound ID, file name and file type
+while getopts ":o:f:t:" option; do
+   case $option in
+      o) # give outbound id
+        outboundIds=$OPTARG;;
+      f) # give name you will assign file when sent
+        fileName=$OPTARG;;
+      t) # give type of file
+        fileType=$OPTARG;;
+      \?) #Invalid option
+        echo "ERROR: Invalid option"
+      exit;;
+   esac
+done
+
+#create listFiles variable
+listFiles="$(ls clientResourcesFolder/outboundRoutes.json 2>&1)"
+lsError=$(cut -d ':' -f3 <<< $listFiles)
+
+#Check if error exists, display message to run command for getting unread messages if outboundRoutes.json file does not exist
+if [[ "$lsError" == " No such file or directory" ]] &&  ! [[ $outboundIds ]]
+then
+  echo -e "\n${BWHITE}\"sea-client-nodejs/clientResourcesFolder/outboundRoutes.json\"${BYELLOW} does not currently exist to pull ${BWHITE}outbound IDs ${BYELLOW}from ${BBLUE}${UBLUE}please run the below command to pull outbound routes before running this commmand again${NC}${BYELLOW}:"
+  echo -e "\n\n${BWHITE}Command: ${BGREEN}./curlGetOutboundRoutes\n"
+  exit 1
+fi
+
+#If checkTranId is not empty then a transaction is currently open, exit script
+if [ "$checkTranId" != '""' ]
+then
+  echo -e "\n${BRED}TransactionId: ${BWHITE}$checkTranId${BRED} is currently open!"
+  echo -e "\n\n${BYELLOW}You must first close this transaction before you can open another.${NC}\n"
+  exit 1
+fi
+
+#While outboundIds is empty ask user for input and display where outbound IDs can be found
+while ! [[ $outboundIds ]]; do 
+  read -p "$(echo -e "\n"${BYELLOW}"Please enter outbound ID/s from ${BWHITE}\"sea-client-nodejs/clientResourcesFolder/outboundRoutes.json\"${BYELLOW}. ${BBLUE}${UBLUE}If you are using more than one outbound ID sepearate them with spaces ${NC}${BWHITE}(e.g. outboundID1 outboundID2 outboundID3)${BYELLOW}: "${NC})" outboundIds
+  echo -e "\n"
+done
+
+#Array to contain outboundIds
+oids=( $outboundIds )
+
+#Create counter and set to 1
+outboundIdCount=1 
+#Create allOutboundIds array to contain user input
+allOutboundIds=()
+
+#Loop through oids and place each string in allOutbounds array to create proper string for data in curl statement
+for ((i=0; i<${#oids[@]}; i++)); do
+  
+  #If oids greater than outboundIdCount add this string to allOutboundIds array and iterate ouboundIdCount
+  if [[ ${#oids[@]} -gt $outboundIdCount ]]
+  then
+    allOutboundIds+=("\"${oids[i]}\", ")
+    outboundIdCount=$(expr $outboundIdCount + 1)
+
+  #Else add this string
+  else
+    allOutboundIds+=("\"${oids[i]}\"")
+  fi
+done
+
+#Set userOutboundIds to the contents within allOutboundIds array
+userOutboundIds=$(echo -e ${allOutboundIds[@]})
+
+#While fileName is empty ask user for input and display where outbound IDs can be found
+while ! [ $fileName ]; do 
+  read -p "$(echo -e "\n"${BYELLOW}"Please enter the ${BWHITE}file name${BYELLOW} you will assign to this file when it is sent ${BWHITE}(e.g. exampleFile.MOR)${BYELLOW}: "${NC})" fileName
+  echo -e "\n"
+done
+
+#Create array for outboundFileTypes and boolean for fileTypeExists
+outboundFileTypes=("BirthInfantDeath" "FetalDeath" "ITOP" "Mortality" "Natality" "Roster" "Other")
+fileTypeExists=false
+
+#While fileType is empty ask user for input and display where outbound IDs can be found
+while ! [ $fileType ]; do 
+  read -p "$(echo -e "\n"${BYELLOW}"Please enter the ${BWHITE}file type${BYELLOW} you will assign to this file when it is sent ${BWHITE}(e.g. Mortality)${BYELLOW}: "${NC})" fileType
+  echo -e "\n"
+done
+
+#If user string matches "birthinfantdeath" change to "BirthInfantDeath" to avoid
+#error at check
+if [ "$fileType" = "birthinfantdeath" ]
+then
+  fileType="BirthInfantDeath"
+
+#elif user string matches "fetaldeath" change to "FetaltDeath" to avoid
+#error at check
+elif [ "$fileType" == "fetaldeath" ]
+then
+  fileType="FetalDeath"
+
+#elif user string matches "itop" change to "ITOP" to avoid
+#error at check
+elif [ "$fileType" == "itop" ]
+then
+  fileType="ITOP"
+
+#Else change first character to uppercase if lower case to avoid error at check
+else
+  fileType="$(tr '[:lower:]' '[:upper:]' <<< ${fileType:0:1})${fileType:1}"
+fi
+
+#Check if fileType matches any index in outboundFileTypes array and if it does set fileTypeExists to true 
+for ((i=0; i<${#outboundFileTypes[@]}; i++)); do
+  if [[ ${outboundFileTypes[$i]} == "$fileType" ]]
+  then
+    fileTypeExists=true
+  fi
+done
+
+
+#Open transaction and set transactionInfo variable to output
+if [ $fileTypeExists = true ]
+then
+transactionInfo=$(curl -X 'POST' \
   'https://external-api.test.steve.naphsis.us/openTransaction' \
   -H 'accept: application/json' \
-  -H 'Authorization: Bearer iiiiiiiiiiiiiiii' \
+  -H "Authorization: Bearer $token" \
   -H 'Content-Type: application/json' \
-  -d '{
-  "outboundIds": [
-    "<outboundID>"
-  ],
-  "fileName": "<fileName>.<fileExtension e.g. MOR, FET>",
-  "fileType": "<fileType e.g. Mortality, FetalDeath>"
-}'
+  -d "{
+  "'"outboundIds"'": [$userOutboundIds],
+  "'"fileName"'": "'"'$fileName'"'",
+  "'"fileType"'": "'"'$fileType'"'"
+}")
+#Else echo ERROR statement and list valid file types and example command
+else
+  echo -e "${BRED}\nERROR: That is an invalid File Type! Please run command again with a valid file type.\n\n${BYELLOW}############### Valid File Types ###############\n\n-BirthInfantDeath\n-FetalDeath\n-ITOP\n-Mortality\n-Natality\n-Roster\n-Other\n\n"
+  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./curlOpenTransaction -o <outboundIds> -f <fileName> -t <fileType>${NC}"
+  echo -e "\n\n${NC}${BYELLOW}OR...${NC}"
+  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./curlOpenTransaction\n${NC}"
+  exit 1;
+fi
+
+#Cut error message if it exists in field 4 with a delimeter of " and set errorMessage variable to output
+errorMessage=$(cut -d '"' -f4 <<< $transactionInfo)
+currentOpenTransaction=$(cut -d '"' -f8 <<< $transactionInfo)
+
+#If string from field 4 of cut is equal to "Outbound IDs not found in realm by type." echo ERROR message
+#with instructions on how to run the command and where to find outbound IDs and how to generate a outboundRoutes.json
+#if one does not exist, exit script
+if [[ "$errorMessage" != "Transaction Opened" ]]
+then
+  echo -e "\n${BRED}ERROR: $errorMessage Invalid outbound ID/s!" 
+  echo -e "\n\n${BYELLOW}Please run command again with valid outbound ID/s from ${BWHITE}\"sea-client-nodejs/clientResourcesFolder/outboundRoutes.json\"${BYELLOW}."
+  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./curlOpenTransaction -o <outboundId> -f <fileName> -t <fileType>\n${NC}"
+  echo -e "\n\n${NC}${BYELLOW}OR..${NC}"
+  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./curlOpenTransaction${NC}"
+  echo -e "\n\n${UBLUE}If ${NC}${BWHITE}\"sea-client-nodejs/clientResourcesFolder/outboundRoutes.json\" ${UBLUE}does not currently exist for the file type that you are opening a transaction for then you can run one of the following command to generate it:"
+  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./curlGetOutboundRoutes -f Mortality${NC}"
+  echo -e "\n\n${NC}${BYELLOW}OR...${NC}"
+  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./curlGetOutboundRoutes\n${NC}"
+  exit 1 
+
+#Else open transaction and display transaction id
+else
+  echo -e "\n${BWHITE}Transaction: \"$currentOpenTransaction\" ${BGREEN}is now open.\n"
+  echo -e '#!/bin/bash\n\ntransactionId="'$currentOpenTransaction'"' > transactionId
+fi

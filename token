@@ -1,0 +1,5 @@
+#!/bin/bash
+
+t=$(./curlGetToken)
+
+token=$(cut -d '"' -f4 <<< $t)

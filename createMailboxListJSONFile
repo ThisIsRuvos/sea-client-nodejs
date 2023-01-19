@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#include
+. checkForCRFolder
+
+#Bold Color Text
+BWHITE='\033[1;37m'
+BGREEN='\033[1;32m'
+BRED='\033[1;31m'
+BYELLOW='\033[1;33m'
+BBLUE='\033[1;34m'
+UBLUE='\033[4;34m'
+NC='\033[0m' # No color
+
+#Create mailboxList.json file for all available mailboxes regarding client
+./curlGetInboundMailboxes | json_pp -json_opt pretty,canonical > $checkFolder/mailboxList.json
+
+#Echo file location
+echo -e "\n${BGREEN}Inbound mailbox list has been exported to ${BWHITE}\"sea-client-nodejs/$checkFolder/mailboxList.json\"${BGREEN}.\n"

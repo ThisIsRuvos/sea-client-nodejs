@@ -1,0 +1,5 @@
+#!/bin/bash
+
+secretFile=$(cat secrets.json)
+clientId=$(cut -d '"' -f12 <<< $secretFile)
+secret=$(cut -d '"' -f16 <<< $secretFile)

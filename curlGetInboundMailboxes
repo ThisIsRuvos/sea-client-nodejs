@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#include
+. token
+
+#GET Inbound mailboxes
+curl -X 'GET' \
+  'https://external-api.test.steve.naphsis.us/inbound/' \
+  -H 'accept: application/json' \
+  -H "Authorization: Bearer $token"

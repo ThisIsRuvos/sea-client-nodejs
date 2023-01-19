@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#Create listFolders array
+listFolders=($(ls -d */))
+folders=()
+
+#Remove / from end of folder name at each index in array and add to folders array
+for ((i=0; i<${#listFolders[@]}; i++)); do
+  folders+=(${listFolders[i]%?})
+done
+
+#Create variable for client resource folder to compare to folders array 
+checkFolder="clientResourcesFolder"
+fileExists=false
+
+#Compare folder name at each index of folders array to see if checkFolder name exists and
+#set fileExists to true if checkFolder name exists
+for ((i=0; i<${#folders[@]}; i++)); do
+  if [[ "${folders[$i]}" == "$checkFolder" ]]
+  then
+    fileExists=true
+  fi
+done
+
+#If fileExists is not true then make a directory with the checkFolder name
+if [ $fileExists != true ]
+then
+  mkdir $checkFolder
+fi

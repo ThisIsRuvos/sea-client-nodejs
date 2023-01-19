@@ -1,4 +1,50 @@
-curl -X 'PATCH' \
-  'https://external-api.test.steve.naphsis.us/closeTransaction/<transactionID>' \
+#!/bin/bash
+
+#include
+. token
+. ./transactionId
+
+#Bold Color Text
+BWHITE='\033[1;37m'
+BGREEN='\033[1;32m'
+BRED='\033[1;31m'
+BYELLOW='\033[1;33m'
+BBLUE='\033[1;34m'
+NC='\033[0m' # No color
+
+#Capture closed transaction output in closedTransaction variable
+closedTransaction=$(curl -X 'PATCH' \
+  "https://external-api.test.steve.naphsis.us/closeTransaction/$transactionId" \
   -H 'accept: application/json' \
-  -H 'Authorization: Bearer iiiiiiiiiiii'
+  -H "Authorization: Bearer $token")
+
+#Cut strings from closedTransaction variable for concatenation
+closedMessage=$(cut -d '"' -f12 <<< $closedTransaction)
+closedTrasactionId1=$(cut -d '"' -f2 <<< $closedTransaction)
+closedTrasactionId2=$(cut -d '"' -f3 <<< $closedTransaction)
+closedTrasactionId3=$(cut -d '"' -f4 <<< $closedTransaction)
+catchError=$(cut -d '<' -f6 <<< $closedTransaction)
+
+#Concantenate message
+fullMessage="$closedTrasactionId1$closedTrasactionId2 $closedTrasactionId3"
+
+#If fullMessage is equal to file not uploaded message display error
+if [ "$fullMessage" == "message: A file has not been uploaded. The transaction cannot be closed" ]
+then
+  echo -e "\n${BRED}ERROR: You must first send a file before closing transaction:${BWHITE} $transactionId"
+  echo -e "\n\n${BBLUE}You can run the command again once you have sent a file.${NC}\n"
+
+#Else if catchError is equal to error message display no open transactions message
+elif [ "$catchError" == "title>Error" ] 
+then
+  echo -e "${BYELLOW}\nThere are currently no open transactions." 
+  echo -e "${BYELLOW}\n\nPlease open transaction and send a file before trying to close a transaction again.\n"
+
+#Else echo modified closedMessage and fullMessage and clear transaction id in trasactionId file
+else
+  echo -e "\n${BGREEN}$closedMessage\n"
+  echo -e "${BWHITE}$fullMessage\n"
+
+  #Clear transactionId variable in transactionId.sh file
+  echo -e '#!/bin/bash\n\ntransactionId=""' > transactionId
+fi

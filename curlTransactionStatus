@@ -1,4 +1,28 @@
-curl -X 'GET' \
-  'https://external-api.test.steve.naphsis.us/transactionStatus/<transactionID>' \
+#!/bin/bash
+
+#include
+. token
+. ./transactionId
+
+#Bold colors
+BWHITE='\033[1;37m'
+BGREEN='\033[1;32m'
+BRED='\033[1;31m'
+BYELLOW='\033[1;33m'
+NC='\033[0m' # No color
+
+#If there is no transaction ID display message to user and exit script
+if ! [ $transactionId ]
+then
+  echo -e "\n${BYELLOW}There are currently no open transactions!\n"
+  exit 1
+fi
+
+#GET status of open transaction and set transactionStatus to output
+transactionStatus=$(curl -X 'GET' \
+  "https://external-api.test.steve.naphsis.us/transactionStatus/$transactionId" \
   -H 'accept: application/json' \
-  -H 'Authorization: Bearer iiiiiiiiiiiiiiii'
+  -H "Authorization: Bearer $token")
+
+#Make json pretty and print transaction status
+echo $transactionStatus | json_pp -json_opt pretty,canonical
