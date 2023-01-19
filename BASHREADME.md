@@ -503,6 +503,18 @@ These commands will be used to retrieve unread messages and date ranged messages
 
 <br />
 
+```
+./getMessagesByDateRange -m <mailboxId> -f <fromDate> -t <toDate> -s <status> -p
+```
+
+<br /> 
+
+<br />
+
+<br /> 
+
+<br />
+
 <center>
 
 ![](./assets/img/dateRangeFileCreate.gif)
