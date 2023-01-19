@@ -1,0 +1,5 @@
+curl -X 'POST' \
+  'https://keycloak.test.steve.naphsis.us/auth/realms/api-users/protocol/openid-connect/token' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'grant_type=client_credentials&client_id=steve-test-1&client_secret=74f8621e-531e-415f-a524-d5fbecb8583d'
