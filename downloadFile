@@ -112,10 +112,10 @@ then
   echo -e "\n\n${BWHITE}Example: ${BGREEN}./downloadFile${NC}\n"
 
   exit 1
+else
+  #Display location of downloaded file
+  echo -e "\n\n${BGREEN}$downloadedFile has been downloaded to ${BWHITE}\"sea-client-nodejs/files/inbound/$downloadedFile\"${BGREEN}.${NC}\n\n\n"
 fi
-
-#Display location of downloaded file
-echo -e "\n\n${BGREEN}$downloadedFile has been downloaded to ${BWHITE}\"sea-client-nodejs/files/inbound/$downloadedFile\"${BGREEN}.${NC}\n\n\n"
 
 #While markRead is empty ask user for valid input
 notValid=
@@ -140,7 +140,7 @@ elif  [ "$fileRead" = true ]
 then
   doNothing=
 else
-  echo -e "${BBLUE}If you want to mark this file read in the future you can do so by running the below command:"
+  echo -e "${BBLUE}If you want to mark this file as read in the future and it is not already marked as read you can do so by running the below command:"
   echo -e "\n\n${BWHITE}Command: ${BGREEN}./markAsRead -m $messageId${NC}\n"
 fi
 
@@ -148,5 +148,17 @@ fi
 if [ "$fileRead" = true ]
 then
   fileMarkedRead=$(node markFileRead -m $messageId)
-  echo -e "${BWHITE}$downloadedFile${BGREEN} has been marked as read.\n\n\n"
+  #Set checkError variable to field 8 of cut string from markAsRead variable
+  checkError=$(cut -d ' ' -f8 <<< $fileMarkedRead)
+
+  #See if Failed exists in checkError variable and if do display error message
+  if [ "$checkError" == "Failed" ]
+  then
+    echo -e "\n${BYELLOW}Cannot mark message as read! ${BWHITE}$downloadedFile${BYELLOW} has already been marked as read!${NC}\n"
+    exit 1
+
+  #Else display success message
+  else
+    echo -e "${BWHITE}$downloadedFile${BGREEN} has been marked as read.\n\n\n"
+  fi
 fi

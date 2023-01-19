@@ -52,9 +52,8 @@ checkError=$(cut -d ' ' -f8 <<< $markAsRead)
 #See if Failed exists in checkError variable and if do display error message
 if [ "$checkError" == "Failed" ]
 then
-  echo -e "\n${BRED}ERROR: You have entered an ${BWHITE}invalid messageId${BRED}! Please run command again with a valid messageId."
+  echo -e "\n${BRED}ERROR: You have entered an ${BWHITE}invalid messageId or the messageId of a message that has already been marked as read${BRED}! Please run command again with a valid messageId."
   echo -e "\n\n${BWHITE}Example: ${BGREEN}./markAsRead -m <messageId>${NC}\n"
-  echo -e $markAsRead
   exit 1
 
 #Else display success message

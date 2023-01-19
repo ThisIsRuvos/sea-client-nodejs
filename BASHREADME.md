@@ -1,6 +1,6 @@
 # Bash Functions
 
-These functions are meant to simplify testing and automation for the user based upon the already written nodejs functions and predefined cURL commands. They replace the need to use the Swagger UI and further enable the user to programmatically send and download files as well as list mailboxes, outbound routes and mailbox messages.
+These functions are meant to simplify testing and automation for the user based upon the already written nodejs functions and predefined cURL commands. They replace the need to use the Swagger UI and further enable the user to programmatically send and download files as well as list mailboxes, outbound routes, mailbox messages and mark files as read.
 
 ---
 
@@ -151,14 +151,29 @@ You will first need to open a transaction using an outbound route within the `cl
 
 **Open Transaction without prompt:**
 
->If you run this command it is assumed that you already know the proper information to open a transaction. The file name will be what you decided to name the file when sent (e.g. myTestFile.MOR, myTestFile.NAT, etc.). The file type will be the file type of the file that you will be sending (e.g. Mortality, FetalDeath, ITOP, etc.). With this command you can also send to one outbound route or as many valid outbound routes as you need without having to run the command for each outbound route.<span style="color:#e8640c"> Be sure to seperate the outboundIds with spaces as shown below when using more than one outboundId without any leading or trailing spaces.</span>
-<br />
+>If you run this command it is assumed that you already know the proper information to open a transaction. The file name will be what you decide to name the file when sent (e.g. myTestFile.MOR, myTestFile.NAT, etc.). The file type will be the file type of the file that you will be sending (e.g. Mortality, FetalDeath, ITOP, etc.). With this command you can also send to one outbound route or as many valid outbound routes as you need without having to run the command for each outbound route.<span style="color:#e8640c"> Be sure to seperate the outboundIds with spaces as shown below when using more than one outboundId without any leading or trailing spaces.</span>
 
 <br />
 
-```
+<br />
+
+```bash
 ./curlOpenTransaction -o <outboundIds> -f <fileName> -t <fileType>
 ```
+<br />
+
+<br />
+
+><span style="color:#dde00d;font-weight:bold">If opening transactions for</span> **multiple outboundIds** <span style="color:#dde00d;font-weight:bold">using the options you will need to enclose the outboundIds separated in spaces with </span>**""**<span style="color:#dde00d;font-weight:bold">. As seen below:</span>
+
+<br /> 
+
+<br />
+
+```bash
+./curlOpenTransaction -o "<outboundId1> <outboundId2> <outboundId3> <outboundId4>" -f <fileName> -t <fileType>
+```
+
 <br /> 
 
 <br />
@@ -537,6 +552,10 @@ These commands will be used to retrieve unread messages and date ranged messages
 
 <br />
 
+### Downloading Files and Marking Files Read
+
+The commands below will be used to download files as well as marking them as read.  
+
 **Downloading files without prompt and do not mark file read**
 
 ><span style="color:#0f945c;font-weight:bold">Running this command with only the `-m` option followed by the `messageId` will skip the yes or no prompt but still give you the command to mark the file as read in the future.</span>
@@ -611,7 +630,7 @@ These commands will be used to retrieve unread messages and date ranged messages
 
 **Mark file as read with prompt**
 
->When running this you will be prompted for the needed messageId of the file you will be marking as read.
+>When running this you will be prompted for the needed `messageId` of the file you will be marking as read.
 
 <br /> 
 
