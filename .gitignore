@@ -3,3 +3,7 @@ node_modules
 secrets.json
 .idea
 clientResourcesFolder
+<<<<<<< HEAD
+=======
+output.log
+>>>>>>> 53c6fdf75edd2d8a7aaba23601841e2c95e53497
