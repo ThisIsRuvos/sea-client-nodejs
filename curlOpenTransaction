@@ -137,7 +137,7 @@ done
 if [ $fileTypeExists = true ]
 then
 transactionInfo=$(curl -X 'POST' \
-  'https://external-api.test.steve.naphsis.us/openTransaction' \
+  "$envUrl/openTransaction" \
   -H 'accept: application/json' \
   -H "Authorization: Bearer $token" \
   -H 'Content-Type: application/json' \

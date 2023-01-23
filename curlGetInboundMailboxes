@@ -5,6 +5,6 @@
 
 #GET Inbound mailboxes
 curl -X 'GET' \
-  'https://external-api.test.steve.naphsis.us/inbound/' \
+  "$envUrl/inbound/" \
   -H 'accept: application/json' \
   -H "Authorization: Bearer $token"

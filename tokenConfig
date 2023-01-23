@@ -3,3 +3,5 @@
 secretFile=$(cat secrets.json)
 clientId=$(cut -d '"' -f12 <<< $secretFile)
 secret=$(cut -d '"' -f16 <<< $secretFile)
+clientUrl=$(cut -d '"' -f8 <<< $secretFile)
+clientUrl=$(cut -d '/' -f1 <<< $clientUrl)

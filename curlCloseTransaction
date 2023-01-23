@@ -14,7 +14,7 @@ NC='\033[0m' # No color
 
 #Capture closed transaction output in closedTransaction variable
 closedTransaction=$(curl -X 'PATCH' \
-  "https://external-api.test.steve.naphsis.us/closeTransaction/$transactionId" \
+  "$envUrl/closeTransaction/$transactionId" \
   -H 'accept: application/json' \
   -H "Authorization: Bearer $token")
 

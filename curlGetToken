@@ -5,7 +5,7 @@
 
 #GET token
 curl -X 'POST' \
-  'https://keycloak.test.steve.naphsis.us/auth/realms/api-users/protocol/openid-connect/token' \
+  "https://$clientUrl/auth/realms/api-users/protocol/openid-connect/token" \
   -H 'accept: application/json' \
   -H 'Content-Type: application/x-www-form-urlencoded' \
   -d "grant_type=client_credentials&client_id=$clientId&client_secret=$secret"

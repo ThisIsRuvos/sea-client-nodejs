@@ -20,7 +20,7 @@ fi
 
 #GET status of open transaction and set transactionStatus to output
 transactionStatus=$(curl -X 'GET' \
-  "https://external-api.test.steve.naphsis.us/transactionStatus/$transactionId" \
+  "$envUrl/transactionStatus/$transactionId" \
   -H 'accept: application/json' \
   -H "Authorization: Bearer $token")
 

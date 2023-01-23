@@ -95,7 +95,7 @@ done
 
 #POST to get messages for date range the user input and set dateRangedMessages variable to output
 dateRangedMessages=$(curl -X 'POST' \
-  "https://external-api.test.steve.naphsis.us/inbound/messages/$mailboxId" \
+  "$envUrl/inbound/messages/$mailboxId" \
   -H 'accept: application/json' \
   -H "Authorization: Bearer $token" \
   -H 'Content-Type: application/json' \

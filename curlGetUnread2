@@ -43,7 +43,7 @@ done
 
 #POST to get unread messages from mailbox and set unreadMessages variable to output
 unreadMessages=$(curl -X 'POST' \
-  "https://external-api.test.steve.naphsis.us/inbound/$mailboxId" \
+  "$envUrl/inbound/$mailboxId" \
   -H 'accept: application/json' \
   -H "Authorization: Bearer $token")
 

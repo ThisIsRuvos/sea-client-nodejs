@@ -1,5 +1,8 @@
 #!/bin/bash
 
+. tokenConfig
+
 t=$(./curlGetToken)
 
 token=$(cut -d '"' -f4 <<< $t)
+envUrl=$(cut -d '"' -f28 <<< $secretFile)
