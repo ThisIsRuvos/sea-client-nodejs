@@ -5,4 +5,5 @@
 t=$(./curlGetToken)
 
 token=$(cut -d '"' -f4 <<< $t)
-envUrl=$(cut -d '"' -f28 <<< $secretFile)
+envUrl=$(grep seaBaseUrl secrets.json)
+envUrl=$(cut -d '"' -f4 <<< $envUrl)

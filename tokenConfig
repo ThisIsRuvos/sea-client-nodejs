@@ -1,7 +1,9 @@
 #!/bin/bash
 
-secretFile=$(cat secrets.json)
-clientId=$(cut -d '"' -f12 <<< $secretFile)
-secret=$(cut -d '"' -f16 <<< $secretFile)
-clientUrl=$(cut -d '"' -f8 <<< $secretFile)
+clientId=$(grep clientName secrets.json)
+clientId=$(cut -d '"' -f4 <<< $clientId)
+secret=$(grep clientSecretKey secrets.json)
+secret=$(cut -d '"' -f4 <<< $secret)
+clientUrl=$(grep keycloakAddress secrets.json)
+clientUrl=$(cut -d '"' -f4 <<< $clientUrl)
 clientUrl=$(cut -d '/' -f1 <<< $clientUrl)
