@@ -527,6 +527,36 @@ These commands will be used to retrieve unread messages and date ranged messages
 
 <br />
 
+**Getting unread messages using `./getMessagesByDateRange2`**
+
+>The below commands do the exact same thing as the `./getMessagesByDateRange` command `./getMessagesByDateRange2` just uses the `files/<mailboxId>` route rather than the `/messages/<mailboxId>` route.
+
+><span style="color:#3b98bf">NOTE:</span> The `clientResourcesFolder` folder is automatically created if one does not exist upon running these commands.
+
+<br /> 
+
+<br />
+
+```
+./getMessagesByDateRange2
+```
+
+<br /> 
+
+<br />
+
+<br /> 
+
+<br />
+
+```
+./getMessagesByDateRange2 -m <mailboxId> -f <fromDate> -t <toDate> -s <status> -p
+```
+
+<br /> 
+
+<br />
+
 **Downloading files with prompt**
 
 >When you run this command you must have an `unreadMessages.json` or a `date ranged message file` in your `clientResourcesFolder` or you will be prompted to create one and the script will exit. Once you have an `unreadMessages.json` file or a `date ranged JSON message file` in your `clientResourcesFolder` you will be prompted for the message ID of the file you would like to download.

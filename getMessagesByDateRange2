@@ -1,0 +1,158 @@
+#!/bin/bash
+
+#include
+. token
+. checkForCRFolder
+
+#Bold colors
+BWHITE='\033[1;37m'
+BGREEN='\033[1;32m'
+BRED='\033[1;31m'
+BYELLOW='\033[1;33m'
+BBLUE='\033[1;34m'
+UBLUE='\033[4;34m'
+NC='\033[0m' # No color
+
+#create listFiles variable
+listFiles="$(ls clientResourcesFolder/mailboxList.json 2>&1)"
+lsError=$(cut -d ':' -f3 <<< $listFiles)
+
+#Mailbox ID variable to capture Mailbox ID
+mailboxId=
+
+#Start/End date variables for date range
+startDate=
+endDate=
+
+#status variable for read, unread, all 
+status=
+
+#Create options for mailbox ID, start date, end date and status
+while getopts ":m:f:t:s:" option; do
+   case $option in
+      m) # give mailbox id
+        mailboxId=$OPTARG;;
+      f) # give From date
+        startDate=$OPTARG;;
+      t) # give To date
+        endDate=$OPTARG;;
+      s) # give status
+        status=$OPTARG
+        while getopts p option; do
+          case $option in
+              p) # mark file as read
+                passWarning=true;;
+              \?) #Invalid option
+                echo -e "\n${BRED}ERROR: Invalid option\n${NC}"
+              exit;;
+          esac
+        done;;
+      \?) #Invalid option
+        echo "ERROR: Invalid option"
+      exit;;
+   esac
+done
+
+#Check if error exists, display message to run command for getting mailboxes if mailboxList.json file does not exist
+if [[ "$lsError" == " No such file or directory" ]] && ! [[ $mailboxId ]]
+then
+  echo -e "\n${BWHITE}\"sea-client-nodejs/clientResourcesFolder/mailboxList.json\"${BYELLOW} does not currently exist to pull a ${BWHITE}mailboxId ${BYELLOW}from ${BBLUE}${UBLUE}please run the below command to pull mailboxes associated with this client before running this commmand again${NC}${BYELLOW}:"
+  echo -e "\n\n${BWHITE}Command: ${BGREEN}./createMailboxListJSONFile\n"
+  exit 1
+fi
+
+#While mailboxId variable is empty ask user for input
+while ! [ $mailboxId ]; do
+  
+  #Capture user input
+  read -p "$(echo -e "${BYELLOW}\nEnter ${BHWITE}Mailbox ID ${BYELLOW}from ${BWHITE}\"sea-client-nodejs/$checkFolder/mailboxList.json\"${BYELLOW}:${NC} ")" mailboxId
+  echo -e "\n"
+done
+
+#While startDate variable is empty ask user for input
+while ! [ $startDate ]; do
+  
+  #Capture user input
+  read -p "$(echo -e "${BYELLOW}\nEnter ${BHWITE}Start ${BYELLOW}date for date range in format ${BWHITE}yyyy-mm-dd${BYELLOW}:${NC} ")" startDate
+  echo -e "\n"
+done
+
+#While endDate variable is empty ask user for input
+while ! [ $endDate ]; do
+
+  #Capture user input
+  read -p "$(echo -e "${BYELLOW}\nEnter ${BHWITE}End ${BYELLOW}date for date range in format ${BWHITE}yyyy-mm-dd${BYELLOW}:${NC} ")" endDate
+  echo -e "\n"
+done
+
+#While status variable is empty ask user for input
+while ! [ $status ]; do
+
+  #Capture user input
+  read -p "$(echo -e "${BYELLOW}\nEnter ${BHWITE}Status ${BYELLOW}of messages you would like to view ${BWHITE}e.g. ${BBLUE}read, unread, all :${NC} ")" status
+  echo -e "\n"
+done
+
+#POST to get messages for date range the user input and set dateRangedMessages variable to output
+dateRangedMessages=$(curl -X 'POST' \
+  "$envUrl/inbound/files/$mailboxId" \
+  -H 'accept: application/json' \
+  -H "Authorization: Bearer $token" \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "startDate": "'$startDate'",
+  "endDate": "'$endDate'",
+  "status": "'$status'",
+  "index": 0,
+  "limit": 100
+}')
+
+#Cut error message if it exists in field 4 with a delimeter of " and set errorMessage variable to output
+errorMessage=$(cut -d '"' -f4 <<< $dateRangedMessages)
+
+#If errorMessage string is equal to "mailboxId must be a uuid" then echo ERROR statement, display path to file the
+#mailbox IDs can be found in, instruct how to create a mailboxList.json file if none exists and give command to create file
+if [ "$errorMessage" == "mailboxId must be a uuid" ]
+then
+  echo -e "\n${BRED}ERROR: You entered an invalid mailbox ID!"
+  echo -e "\n\n${BYELLOW}Please run command again and enter a valid mailbox ID from ${BWHITE}\"sea-client-nodejs/$checkFolder/mailboxList.json\"${BYELLOW}."
+  echo -e "\n\n${UBLUE}If ${NC}${BWHITE}\"sea-client-nodejs/$checkFolder/mailboxList.json\" ${UBLUE}does not currently exist then you can run the following command to generate it:"
+  echo -e "\n\n${NC}${BWHITE}Command: ${BGREEN}./createMailboxListJSONFile\n${NC}"
+  exit 1
+
+#If errorMessage string is equal to "startDate should be valid and must match YYYY-MM-DD" then echo ERROR statement 
+elif [ "$errorMessage" == "startDate should be valid and must match YYYY-MM-DD" ]
+then
+  echo -e "\n${BRED}ERROR: You entered an invalid ${BWHITE}start date${BRED}!"
+  echo -e "\n\n${BYELLOW}Please run command again and enter a valid ${BWHITE}start date${BYELLOW}. ${BWHITE}Start date${BYELLOW} should be valid and must match ${BWHITE}yyyy-mm-dd${BYELLOW} format.\n"
+  exit 1
+
+#If errorMessage string is equal to "endDate should be valid and must match YYYY-MM-DD" then echo ERROR statement
+elif [ "$errorMessage" == "endDate should be valid and must match YYYY-MM-DD" ]
+then
+  echo -e "\n${BRED}ERROR: You entered an invalid ${BWHITE}end date${BRED}!"
+  echo -e "\n\n${BYELLOW}Please run command again and enter a valid ${BWHITE}end date${BYELLOW}. ${BWHITE}End date${BYELLOW} should be valid and must match ${BWHITE}yyyy-mm-dd${BYELLOW} format.\n"
+  exit 1
+
+#If errorMessage string is equal to "status must be all/read/unread" then echo ERROR statement
+elif [ "$errorMessage" == "status must be all/read/unread" ]
+then
+  echo -e "\n${BRED}ERROR: You entered an invalid ${BWHITE}status${BRED}!"
+  echo -e "\n\n${BYELLOW}Please run command again and enter a valid ${BWHITE}status${BYELLOW}. ${BWHITE}Status${BYELLOW} must be ${BWHITE}\"all\"${BYELLOW}, ${BWHITE}\"read\"${BYELLOW} or ${BWHITE}\"unread\"${BYELLOW}.\n"
+  exit 1
+
+#Else make json pretty, export to $startDate_to_$endDate_messages.json file and display file path for messages
+else
+  if ! [ $passWarning ]
+  then
+    echo -e "\n${BBLUE}A ${BWHITE}limit of 100 messages will be displayed ${BBLUE}for the date range and status that you specified."
+    echo -e "\nIf you are looking for a specific message you will need to give a more narrow date range.${NC}"
+    read -p "$(echo -e "${BWHITE}\nPress Enter/Return to continue: ")"
+    echo -e "\n"
+    echo $dateRangedMessages | json_pp -json_opt pretty,canonical > $checkFolder/"$startDate"_to_"$endDate"_messages.json
+    echo -e "\n${BGREEN}Messages for ${BWHITE}$startDate${BGREEN} to ${BWHITE}$endDate${BGREEN} have been exported to ${BWHITE}\"sea-client-nodejs/$checkFolder/"$startDate"_to_"$endDate"_messages.json\"${BGREEN}.${NC}\n"
+  else
+    echo $dateRangedMessages | json_pp -json_opt pretty,canonical > $checkFolder/"$startDate"_to_"$endDate"_messages.json
+    echo -e "\n${BGREEN}Messages for ${BWHITE}$startDate${BGREEN} to ${BWHITE}$endDate${BGREEN} have been exported to ${BWHITE}\"sea-client-nodejs/$checkFolder/"$startDate"_to_"$endDate"_messages.json\"${BGREEN}.${NC}\n"
+  fi
+fi
