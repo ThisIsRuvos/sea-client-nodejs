@@ -80,4 +80,3 @@ then
 else
   echo -e "${BRED}\nERROR: That is an invalid File Type! Please run command again with a valid file type.\n\n${BYELLOW}############### Valid File Types ###############\n\n-BirthInfantDeath\n-FetalDeath\n-ITOP\n-Mortality\n-Natality\n-Roster\n-Other\n\n${BWHITE}Example: ${BGREEN}./curlGetOutboundRoutes -f Mortality\n"
 fi
-echo $envUrl
