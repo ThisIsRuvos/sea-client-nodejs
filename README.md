@@ -8,7 +8,7 @@ The STEVE External API service includes a [Swagger UI](https://swagger.io/tools/
 
 ### Link to BASHREADME
 
-This README will give instructions upon how to use the various bash scripts regarding the STEVE External API. These scripts are meant to eliminate the need switch back and forth between the Swagger UI and command line:
+This README will give instructions upon how to use the various bash scripts regarding the STEVE External API. These scripts are meant to eliminate the need to switch back and forth between the Swagger UI and command line:
 
 [BASHREADME.md](./BASHREADME.md)
 
