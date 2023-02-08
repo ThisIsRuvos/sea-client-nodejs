@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #include
-. checkForCRFolder
+. bashCheckForCRFolder
 
 #Bold colors
 BWHITE='\033[1;37m'
@@ -80,9 +80,9 @@ done
 #Check if error exists, display message to run command for getting unread messages if unreadMessages.json file does not exist
 if [[ "$lsError" == " No such file or directory" ]] && ! [[ $messageId ]]
 then
-  echo -e "\n${BWHITE}\"sea-client-nodejs/clientResourcesFolder/unreadMessages.json\"${BYELLOW} nor a date ranged message file currently exist to pull a ${BWHITE}messageId ${BYELLOW}from ${BBLUE}${UBLUE}please run one of the below commands to pull unread messages or date ranged messages for a ${NC}${BWHITE}messageId ${BBLUE}${UBLUE}before running this commmand again${NC}${BYELLOW}:"
-  echo -e "\n\n${BWHITE}Command: ${BGREEN}./curlGetUnread"
-  echo -e "\n\n${BWHITE}Command: ${BGREEN}./getMessagesByDateRange\n"
+  echo -e "\n${BWHITE}\"sea-client-nodejs/clientResourcesFolder/unreadMessages.json\"${BYELLOW} nor a date ranged message file currently exist to pull a ${BWHITE}messageId ${BYELLOW}from ${BBLUE}${UBLUE}please run one of the below commands to pull unread messages or date ranged messages for a ${NC}${BWHITE}messageId ${BBLUE}${UBLUE}before running this commmand again${NC}${BYELLOW} or enter ${BWHITE}7${BYELLOW} OR ${BWHITE}9${BYELLOW} from menu options when you run ${BGREEN}./bashMenu${BYELLOW}:"
+  echo -e "\n\n${BWHITE}Command: ${BGREEN}./bashCurlGetUnread"
+  echo -e "\n\n${BWHITE}Command: ${BGREEN}./bashGetDeliveredFilesByDateRange\n"
   exit 1
 fi
 
@@ -106,10 +106,12 @@ catchError=$(cut -c1- <<< $catchError)
 if [ "$catchError" == "Filename not retrieved." ]
 then
   echo -e "\n${BRED}ERROR: You have entered an ${BWHITE}invalid messageId${BRED}! Please run one of the below commands again with a valid messageId."
-  echo -e "\n\n${BWHITE}Example without mark read option: ${BGREEN}./downloadFile -m <messageId>${NC}"
-  echo -e "\n\n${BWHITE}Example with mark read option: ${BGREEN}./downloadFile -m <messageId> -r${NC}"
+  echo -e "\n\n${BWHITE}Example without mark read option: ${BGREEN}./bashDownloadFile -m <messageId>${NC}"
+  echo -e "\n\n${BWHITE}Example with mark read option: ${BGREEN}./bashDownloadFile -m <messageId> -r${NC}"
   echo -e "\n\n${BYELLOW}OR...${NC}"
-  echo -e "\n\n${BWHITE}Example: ${BGREEN}./downloadFile${NC}\n"
+  echo -e "\n\n${BWHITE}Example: ${BGREEN}./bashDownloadFile${NC}\n"
+  echo -e "\n\n${NC}${BYELLOW}OR...${NC}"
+  echo -e "\n\n${NC}${BWHITE}Run this command and enter ${BBLUE}11${BWHITE} from Menu options: ${BGREEN}./bashMenu\n${NC}"
 
   exit 1
 else
@@ -141,7 +143,7 @@ then
   doNothing=
 else
   echo -e "${BBLUE}If you want to mark this file as read in the future and it is not already marked as read you can do so by running the below command:"
-  echo -e "\n\n${BWHITE}Command: ${BGREEN}./markAsRead -m $messageId${NC}\n"
+  echo -e "\n\n${BWHITE}Command: ${BGREEN}./bashMarkAsRead -m $messageId${NC}\n"
 fi
 
 #If $fileRead boolean is true then markFile as read

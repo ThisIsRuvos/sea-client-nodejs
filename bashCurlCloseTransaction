@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #include
-. token
-. ./transactionId
+. bashToken
+. ./bashTransactionId
 
 #Bold Color Text
 BWHITE='\033[1;37m'
@@ -46,5 +46,5 @@ else
   echo -e "${BWHITE}$fullMessage\n"
 
   #Clear transactionId variable in transactionId.sh file
-  echo -e '#!/bin/bash\n\ntransactionId=""' > transactionId
+  echo -e '#!/bin/bash\n\ntransactionId=""' > bashTransactionId
 fi

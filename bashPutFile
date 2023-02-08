@@ -1,9 +1,9 @@
 #!/bin/bash
 
-. ./transactionId
+. ./bashTransactionId
 
 #Set tranId variable to contents of transactionId.sh
-tranId=$(cat transactionId)
+tranId=$(cat bashTransactionId)
 
 #Set checkTranId to cut string from field 2 of tranId variable
 checkTranId=$(cut -d '=' -f2 <<< $tranId)
@@ -32,8 +32,8 @@ NC='\033[0m' # No color
 if [ "$checkTranId" == '""' ]
 then
   echo -e "\n${BRED}There are currently no open transactions!"
-  echo -e "\n\n${BYELLOW}You will need to first run the below command to open a transaction before putting a file:"
-  echo -e "\n\n${BWHITE}Command: ${BGREEN}./curlOpenTransaction${NC}\n"
+  echo -e "\n\n${BYELLOW}You will need to first run the below command to open a transaction before putting a file or enter ${BWHITE}2${BYELLOW} when you run ${BGREEN}./bashMenu${BYELLOW}:"
+  echo -e "\n\n${BWHITE}Command: ${BGREEN}./bashCurlOpenTransaction${NC}\n"
   exit 1
 fi
 
@@ -96,5 +96,7 @@ else
     for ((i=0; i<${#outboundFiles[@]}; i++)); do
         echo -e "${outboundFiles[i]}"
     done
-    echo -e "\n${BWHITE}Example: ${BGREEN}./putFile -f ${outboundFiles[0]}\n"
+    echo -e "\n${BWHITE}Example: ${BGREEN}./bashPutFile -f ${outboundFiles[0]}\n"
+    echo -e "\n\n${NC}${BYELLOW}OR...${NC}"
+    echo -e "\n\n${NC}${BWHITE}Run this command and enter ${BBLUE}3${BWHITE} from the Menu options: ${BGREEN}./bashMenu\n${NC}"
 fi

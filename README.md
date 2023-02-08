@@ -6,6 +6,12 @@ By itself, this repository will not be useful. This README is intended as a supp
 
 The STEVE External API service includes a [Swagger UI](https://swagger.io/tools/swagger-ui/) component. Swagger UI provides a browser-based illustration of the available routes, with examples of requests and responses. More importantly, it provides a way to simulate an api client through structured forms connected to live endpoints.  Used in conjunction with client functions provided in this repository, complete end-to-end tests can be performed prior to development. As code is developed, the Swagger functions will work in conjunction with completed code for continued end-to-end testing throughout the development process.
 
+### Link to BASHREADME
+
+This README will give instructions upon how to use the various bash scripts regarding the STEVE External API. These scripts are meant to eliminate the need switch back and forth between the Swagger UI and command line:
+
+[BASHREADME.md](./BASHREADME.md)
+
 ## Prerequisites
 
 In order to take advantage of the example code provided in this repository, use the STEVE External API Testing Instructions document as the primary guide to understand process flows, when to use SWAGGER UI routes, and how the example code fits within those processes.

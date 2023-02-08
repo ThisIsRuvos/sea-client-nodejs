@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #include
-. token
+. bashToken
 
 #Get contents of file for tranId variable
-tranId=$(cat transactionId)
+tranId=$(cat bashTransactionId)
 
 #Cut transaction id from tranId variable and set checkTranId to transaction id
 checkTranId=$(cut -d '=' -f2 <<< $tranId)
@@ -40,8 +40,8 @@ lsError=$(cut -d ':' -f3 <<< $listFiles)
 #Check if error exists, display message to run command for getting unread messages if outboundRoutes.json file does not exist
 if [[ "$lsError" == " No such file or directory" ]] &&  ! [[ $outboundIds ]]
 then
-  echo -e "\n${BWHITE}\"sea-client-nodejs/clientResourcesFolder/outboundRoutes.json\"${BYELLOW} does not currently exist to pull ${BWHITE}outbound IDs ${BYELLOW}from ${BBLUE}${UBLUE}please run the below command to pull outbound routes before running this commmand again${NC}${BYELLOW}:"
-  echo -e "\n\n${BWHITE}Command: ${BGREEN}./curlGetOutboundRoutes\n"
+  echo -e "\n${BWHITE}\"sea-client-nodejs/clientResourcesFolder/outboundRoutes.json\"${BYELLOW} does not currently exist to pull ${BWHITE}outbound IDs ${BYELLOW}from ${BBLUE}${UBLUE}please run the below command to pull outbound routes before running this commmand again${NC}${BYELLOW} or enter ${BWHITE}1${BYELLOW} from Menu options when you run ${BGREEN}./bashMenu${BYELLOW}:"
+  echo -e "\n\n${BWHITE}Command: ${BGREEN}./bashCurlGetOutboundRoutes\n"
   exit 1
 fi
 
@@ -148,10 +148,12 @@ transactionInfo=$(curl -X 'POST' \
 }")
 #Else echo ERROR statement and list valid file types and example command
 else
-  echo -e "${BRED}\nERROR: That is an invalid File Type! Please run command again with a valid file type.\n\n${BYELLOW}############### Valid File Types ###############\n\n-BirthInfantDeath\n-FetalDeath\n-ITOP\n-Mortality\n-Natality\n-Roster\n-Other\n\n"
-  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./curlOpenTransaction -o <outboundIds> -f <fileName> -t <fileType>${NC}"
+  echo -e "${BRED}\nERROR: That is an invalid File Type! Please run command again with a valid file type.\n\n${BYELLOW}############### Valid File Types ###############\n\n-BirthInfantDeath\n-FetalDeath\n-ITOP\n-Mortality\n-Natality\n-Roster\n-Other"
+  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./bashCurlOpenTransaction -o <outboundIds> -f <fileName> -t <fileType>${NC}"
   echo -e "\n\n${NC}${BYELLOW}OR...${NC}"
-  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./curlOpenTransaction\n${NC}"
+  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./bashCurlOpenTransaction\n${NC}"
+  echo -e "\n\n${NC}${BYELLOW}OR...${NC}"
+  echo -e "\n\n${NC}${BWHITE}Run this command and enter ${BBLUE}2${BWHITE} from Menu options: ${BGREEN}./bashMenu\n${NC}"
   exit 1;
 fi
 
@@ -166,17 +168,21 @@ if [[ "$errorMessage" != "Transaction Opened" ]]
 then
   echo -e "\n${BRED}ERROR: $errorMessage Invalid outbound ID/s!" 
   echo -e "\n\n${BYELLOW}Please run command again with valid outbound ID/s from ${BWHITE}\"sea-client-nodejs/clientResourcesFolder/outboundRoutes.json\"${BYELLOW}."
-  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./curlOpenTransaction -o <outboundId> -f <fileName> -t <fileType>\n${NC}"
+  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./bashCurlOpenTransaction -o <outboundId> -f <fileName> -t <fileType>\n${NC}"
   echo -e "\n\n${NC}${BYELLOW}OR..${NC}"
-  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./curlOpenTransaction${NC}"
-  echo -e "\n\n${UBLUE}If ${NC}${BWHITE}\"sea-client-nodejs/clientResourcesFolder/outboundRoutes.json\" ${UBLUE}does not currently exist for the file type that you are opening a transaction for then you can run one of the following command to generate it:"
-  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./curlGetOutboundRoutes -f Mortality${NC}"
+  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./bashCurlOpenTransaction${NC}"
   echo -e "\n\n${NC}${BYELLOW}OR...${NC}"
-  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./curlGetOutboundRoutes\n${NC}"
+  echo -e "\n\n${NC}${BWHITE}Run this command and enter ${BBLUE}2${BWHITE} from Menu options: ${BGREEN}./bashMenu\n${NC}"
+  echo -e "\n\n${UBLUE}If ${NC}${BWHITE}\"sea-client-nodejs/clientResourcesFolder/outboundRoutes.json\" ${UBLUE}does not currently exist for the file type that you are opening a transaction for then you can run one of the following command to generate it:"
+  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./bashCurlGetOutboundRoutes -f Mortality${NC}"
+  echo -e "\n\n${NC}${BYELLOW}OR...${NC}"
+  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./bashCurlGetOutboundRoutes\n${NC}"
+  echo -e "\n\n${NC}${BYELLOW}OR...${NC}"
+  echo -e "\n\n${NC}${BWHITE}Run this command and enter ${BBLUE}1${BWHITE} from Menu options: ${BGREEN}./bashMenu\n${NC}"
   exit 1 
 
 #Else open transaction and display transaction id
 else
   echo -e "\n${BWHITE}Transaction: \"$currentOpenTransaction\" ${BGREEN}is now open.\n"
-  echo -e '#!/bin/bash\n\ntransactionId="'$currentOpenTransaction'"' > transactionId
+  echo -e '#!/bin/bash\n\ntransactionId="'$currentOpenTransaction'"' > bashTransactionId
 fi

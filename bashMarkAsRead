@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. checkForCRFolder
+. bashCheckForCRFolder
 
 #Bold colors
 BWHITE='\033[1;37m'
@@ -32,9 +32,9 @@ done
 #Check if error exists, display message to run command for getting unread messages or date ranged messages if unreadMessages.json or date ranged messages json file does not exist
 if [[ "$lsError" == " No such file or directory" ]] && ! [[ $messageId ]]
 then
-  echo -e "\n${BWHITE}\"sea-client-nodejs/clientResourcesFolder/unreadMessages.json\"${BYELLOW} nor a date ranged messages file currently exist to pull a ${BWHITE}messageId ${BYELLOW}from ${BBLUE}${UBLUE}please run one of the below commands to pull unread messages for a ${NC}${BWHITE}messageId ${BBLUE}${UBLUE}before running this commmand again${NC}${BYELLOW}:"
-  echo -e "\n\n${BWHITE}Command: ${BGREEN}./curlGetUnread\n"
-  echo -e "\n\n${BWHITE}Command: ${BGREEN}./getMessagesByDateRange\n"
+  echo -e "\n${BWHITE}\"sea-client-nodejs/clientResourcesFolder/unreadMessages.json\"${BYELLOW} nor a date ranged messages file currently exist to pull a ${BWHITE}messageId ${BYELLOW}from ${BBLUE}${UBLUE}please run one of the below commands to pull unread messages for a ${NC}${BWHITE}messageId ${BBLUE}${UBLUE}before running this commmand again${NC}${BYELLOW} or enter ${BWHITE}7${BYELLOW} OR ${BWHITE}9${BYELLOW} from menu options when you run ${BGREEN}./bashMenu${BYELLOW}:"
+  echo -e "\n\n${BWHITE}Command: ${BGREEN}./bashCurlGetUnread\n"
+  echo -e "\n\n${BWHITE}Command: ${BGREEN}./bashGetMessagesByDateRange\n"
   exit 1
 fi
 
@@ -53,7 +53,9 @@ checkError=$(cut -d ' ' -f8 <<< $markAsRead)
 if [ "$checkError" == "Failed" ]
 then
   echo -e "\n${BRED}ERROR: You have entered an ${BWHITE}invalid messageId or the messageId of a message that has already been marked as read${BRED}! Please run command again with a valid messageId."
-  echo -e "\n\n${BWHITE}Example: ${BGREEN}./markAsRead -m <messageId>${NC}\n"
+  echo -e "\n\n${BWHITE}Example: ${BGREEN}./bashMarkAsRead -m <messageId>${NC}\n"
+  echo -e "\n\n${NC}${BYELLOW}OR...${NC}"
+  echo -e "\n\n${NC}${BWHITE}Run this command and enter ${BBLUE}12${BWHITE} from Menu options: ${BGREEN}./bashMenu\n${NC}"
   exit 1
 
 #Else display success message

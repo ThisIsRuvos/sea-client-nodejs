@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #include
-. token
-. checkForCRFolder
+. bashToken
+. bashCheckForCRFolder
 
 BWHITE='\033[1;37m'
 BGREEN='\033[1;32m'
@@ -30,8 +30,8 @@ done
 #Check if error exists, display message to run command for getting unread messages if mailboxList.json file does not exist
 if [[ "$lsError" == " No such file or directory" ]] && ! [[ $mailboxId ]]
 then
-  echo -e "\n${BWHITE}\"sea-client-nodejs/clientResourcesFolder/mailboxList.json\"${BYELLOW} does not currently exist to pull a ${BWHITE}mailboxId ${BYELLOW}from ${BBLUE}${UBLUE}please run the below command to pull mailboxes associated with this client before running this commmand again${NC}${BYELLOW}:"
-  echo -e "\n\n${BWHITE}Command: ${BGREEN}./createMailboxListJSONFile\n"
+  echo -e "\n${BWHITE}\"sea-client-nodejs/clientResourcesFolder/mailboxList.json\"${BYELLOW} does not currently exist to pull a ${BWHITE}mailboxId ${BYELLOW}from ${BBLUE}${UBLUE}please run the below command to pull mailboxes associated with this client before running this commmand again${NC}${BYELLOW} or enter ${BWHITE}6${BYELLOW} from menu options when you run ${BGREEN}./bashMenu${BYELLOW}:"
+  echo -e "\n\n${BWHITE}Command: ${BGREEN}./bashCreateMailboxListJSONFile\n"
   exit 1
 fi
 
@@ -45,7 +45,11 @@ done
 unreadMessages=$(curl -X 'POST' \
   "$envUrl/inbound/$mailboxId" \
   -H 'accept: application/json' \
-  -H "Authorization: Bearer $token")
+  -H "Authorization: Bearer $token"
+  -d '{
+  "index": 0,
+  "limit": 100
+}')
 
 #Cut error message if it exists in field 4 with a delimeter of " and set errorMessage variable to output
 errorMessage=$(cut -d '"' -f4 <<< $unreadMessages)
@@ -56,10 +60,10 @@ errorMessage=$(cut -d '"' -f4 <<< $unreadMessages)
 if [ "$errorMessage" == "mailboxId must be a uuid" ]
 then
   echo -e "\n${BRED}ERROR: That is an invalid mailbox ID!"
-  echo -e "\n\n${BYELLOW}Please run command again with a valid mailbox ID from ${BWHITE}\"sea-client-nodejs/$checkFolder/mailboxList.json\"${BYELLOW}."
-  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./curlGetUnread -m <mailboxId>\n${NC}"
-  echo -e "\n\n${BBLUE}${UBLUE}If ${NC}${BWHITE}\"sea-client-nodejs/$checkFolder/mailboxList.json\" ${UBLUE}does not currently exist then you can run the following command to generate it:"
-  echo -e "\n\n${NC}${BWHITE}Command: ${BGREEN}./createMailboxListJSONFile\n${NC}"
+  echo -e "\n\n${BYELLOW}Please run command again with a valid mailbox ID from ${BWHITE}\"sea-client-nodejs/$checkFolder/mailboxList.json\"${BYELLOW} or enter ${BWHITE}8${BYELLOW} from menu options when you run ${BGREEN}./bashMenu${BYELLOW}:"
+  echo -e "\n\n${NC}${BWHITE}Example: ${BGREEN}./bashCurlGetUnread2 -m <mailboxId>\n${NC}"
+  echo -e "\n\n${BBLUE}${UBLUE}If ${NC}${BWHITE}\"sea-client-nodejs/$checkFolder/mailboxList.json\" ${UBLUE}does not currently exist then you can run the following command to generate it${NC}${BBLUE} or enter ${BWHITE}6${BBLUE} from menu options when you run ${BGREEN}./bashMenu${BBLUE}:"
+  echo -e "\n\n${NC}${BWHITE}Command: ${BGREEN}./bashCreateMailboxListJSONFile\n${NC}"
   exit 1
 
 #Else make json pretty, export to unreadMessages.json file and display file path for messages

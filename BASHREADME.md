@@ -4,6 +4,51 @@ These functions are meant to simplify testing and automation for the user based 
 
 ---
 
+**NodeJS Setup**
+
+Install NodeJS if not already present (linux examples):
+
+```
+apt-get update
+apt-get install -y nodejs
+```
+
+Check the Node version:
+
+```
+node --version
+```
+
+If the node version is less than 12, install the `n` package, then upgrade Node:
+
+```
+npm install -g n
+n latest
+```
+---
+
+## Bash STEVE External API Test Menu
+
+>This menu will help to simplify testing and is built upon the commands that are explained within this README. This command will prompt you with a menu and options 1 - 12 of what you would like to test. You simply enter the number of the option you would like to try and it will run the script associated with that number.
+
+<br />
+
+<br />
+
+```
+./bashMenu
+```
+
+<br />
+
+<br />
+
+><span style="color:#0f945c;font-weight:bold">You will see the below menu once you run this command.</span>
+
+![](./assets/img/testMenu.png)
+
+---
+
 ## Sending Files
 
 You will first need to open a transaction using an outbound route within the `clientResourcesFolder/outboundRoutes.json` file located in this repo. <span style="color:#3b98bf">**Both the `clientResourcesFolder` folder and `outboundRoutes.json` file will be created for you upon running the below commands.**</span>
@@ -23,7 +68,7 @@ You will first need to open a transaction using an outbound route within the `cl
 <br />
 
 ```
-./curlGetOutboundRoutes
+./bashCurlGetOutboundRoutes
 ```
 
 <br />
@@ -83,7 +128,7 @@ You will first need to open a transaction using an outbound route within the `cl
 <br />
 
 ```
-./curlGetOutboundRoutes -f <fileType>
+./bashCurlGetOutboundRoutes -f <fileType>
 ```
 
 <br />
@@ -110,12 +155,6 @@ You will first need to open a transaction using an outbound route within the `cl
 
 <br />
 
-<center>
-
-![](./assets/img/openTOutboundRoutesClick.gif)
-
-</center>
-
 <br />
 
 >With this command you can send to one outbound route or as many valid outbound routes as you need without having to run the command for each outbound route.<span style="color:#e8640c"> Be sure to seperate the outboundIds with spaces as shown below when using more than one outboundId without any leading or trailing spaces.</span>
@@ -125,8 +164,19 @@ You will first need to open a transaction using an outbound route within the `cl
 <br />
 
 ```
-./curlOpenTransaction
+./bashCurlOpenTransaction
 ```
+
+<br />
+
+<center>
+
+![](./assets/img/openTOutboundRoutesClick.gif)
+
+</center>
+
+<br />
+
 <br />
 
 <br />
@@ -158,7 +208,7 @@ You will first need to open a transaction using an outbound route within the `cl
 <br />
 
 ```bash
-./curlOpenTransaction -o <outboundIds> -f <fileName> -t <fileType>
+./bashCurlOpenTransaction -o <outboundIds> -f <fileName> -t <fileType>
 ```
 <br />
 
@@ -171,7 +221,7 @@ You will first need to open a transaction using an outbound route within the `cl
 <br />
 
 ```bash
-./curlOpenTransaction -o "<outboundId1> <outboundId2> <outboundId3> <outboundId4>" -f <fileName> -t <fileType>
+./bashCurlOpenTransaction -o "<outboundId1> <outboundId2> <outboundId3> <outboundId4>" -f <fileName> -t <fileType>
 ```
 
 <br /> 
@@ -199,14 +249,18 @@ You will first need to open a transaction using an outbound route within the `cl
 <br />
 
 ```
-./putFile
+./bashPutFile
 ```
 
 <br /> 
 
 <br />
 
-![](./assets/img/putFile.png)
+<center>
+
+![](./assets/img/bashPutFile.gif)
+
+</center>
 
 <br /> 
 
@@ -233,7 +287,7 @@ You will first need to open a transaction using an outbound route within the `cl
 <br />
 
 ```
-./putFile -f <fileName>
+./bashPutFile -f <fileName>
 ```
 
 <br /> 
@@ -246,7 +300,11 @@ You will first need to open a transaction using an outbound route within the `cl
 
 <br />
 
-![](./assets/img/fileSent2.png)
+<center>
+
+![](./assets/img/fileSent2.gif)
+
+</center>
 
 <br /> 
 
@@ -261,7 +319,7 @@ You will first need to open a transaction using an outbound route within the `cl
 <br />
 
 ```
-./closeTransaction
+./bashCurlCloseTransaction
 ```
 <br /> 
 
@@ -294,7 +352,7 @@ These commands will be used to retrieve unread messages and date ranged messages
 <br />
 
 ```
-./createMailboxListJSONFile
+./bashCreateMailboxListJSONFile
 ```
 
 <br /> 
@@ -321,7 +379,7 @@ These commands will be used to retrieve unread messages and date ranged messages
 
 **Get unread messages with prompt**
 
->This command will pull all unread messages with a limit of 100 messages for a mailbox. You will be prompted for the mailbox id for pulling unread messages.<span style="color:#e8640c"> If a `mailboxList.json` file does not exist you will be prompted to create one and the script will exit.</span>
+>This command will pull all unread messages delivered to the client with a limit of 100 messages for a mailbox. You will be prompted for the mailbox id for pulling unread messages.<span style="color:#e8640c"> If a `mailboxList.json` file does not exist you will be prompted to create one and the script will exit.</span> `It is recommended that you use this command as the primary between the ./curlGetUnread and ./curlGetUnread2 commands as it only pulls messages that are available for download by the client.`
 
 ><span style="color:#3b98bf">NOTE:</span> The `clientResourcesFolder` folder is automatically created if one does not exist upon running this command.
 
@@ -330,7 +388,7 @@ These commands will be used to retrieve unread messages and date ranged messages
 <br />
 
 ```
-./curlGetUnread
+./bashCurlGetUnread
 ```
 
 <br /> 
@@ -357,7 +415,7 @@ These commands will be used to retrieve unread messages and date ranged messages
 
 **Get unread messages without prompt**
 
->This command will pull all unread messages with a limit of 100 messages for a mailbox. When running with the `-m` you will not need to have a mailboxList.json file since you already have a mailbox ID.<span style="color:#3b98bf"> This command will create a `clientResourceFolder` folder to contain the `unreadMessages.json` file if one does not already exist.</span>
+>This command will pull all unread messages delivered to the client with a limit of 100 messages for a mailbox. When running with the `-m` you will not need to have a mailboxList.json file since you already have a mailbox ID.<span style="color:#3b98bf"> This command will create a `clientResourceFolder` folder to contain the `unreadMessages.json` file if one does not already exist.</span>
 
 ><span style="color:#3b98bf">NOTE:</span> The `clientResourcesFolder` folder is automatically created if one does not exist upon running this command.
 
@@ -366,7 +424,7 @@ These commands will be used to retrieve unread messages and date ranged messages
 <br />
 
 ```
-./curlGetUnread -m <mailboxId>
+./bashCurlGetUnread -m <mailboxId>
 ```
 
 <br /> 
@@ -393,7 +451,7 @@ These commands will be used to retrieve unread messages and date ranged messages
 
 **Getting unread messages using `./curlGetUnread2`**
 
->The below commands do the exact same thing as the `./curlGetUnread` command `./curlGetUnread2` just uses the `/inbound/<mailboxId>` route rather than the `/files/<mailboxId>` route.
+>The below commands pull all unread messages within a mailbox whether they were delivered to the client and are downloadable or not. `It is recommended that you use ./curlGetUnread as the primary command instead of this command as ./curlGetUnread only pulls messages that are available for download by the client.`
 
 ><span style="color:#3b98bf">NOTE:</span> The `clientResourcesFolder` folder is automatically created if one does not exist upon running these commands.
 
@@ -402,7 +460,7 @@ These commands will be used to retrieve unread messages and date ranged messages
 <br />
 
 ```
-./curlGetUnread2
+./bashCurlGetUnread2
 ```
 
 <br /> 
@@ -414,7 +472,7 @@ These commands will be used to retrieve unread messages and date ranged messages
 <br />
 
 ```
-./curlGetUnread2 -m <messageId>
+./bashCurlGetUnread2 -m <messageId>
 ```
 
 <br /> 
@@ -423,16 +481,18 @@ These commands will be used to retrieve unread messages and date ranged messages
 
 **Getting messages from within a date range with prompt**
 
->This command allows you to get messages within a specific date range using <span style="color:#dde00d">From</span> and <span style="color:#dde00d">To</span> dates with the following date format <span style="color:#dde00d">yyyy-mm-dd</span>.<span style="color:#e8640c"> The earliest possible date you can get messages for the client is from time the client was created. You can not pull messages from any earlier.</span> It also allows you to pick between three statuses <span style="color:#dde00d">all</span>, <span style="color:#dde00d">read</span> and <span style="color:#dde00d">unread</span>. <span style="color:#e8640c">If you run this command without a `mailboxList.json` file it will assume that you do not have the needed mailbox ID and will prompt you to run the command to create the file and exit.</span>
+>This command allows you to get all messages, even messages that have not been delivered to the client, within a specific date range using <span style="color:#dde00d">From</span> and <span style="color:#dde00d">To</span> dates with the following date format <span style="color:#dde00d">yyyy-mm-dd</span>.<span style="color:#e8640c"> The earliest possible date you can get messages for the client is from time the client was created. You can not pull messages from any earlier.</span> It also allows you to pick between three statuses <span style="color:#dde00d">all</span>, <span style="color:#dde00d">read</span> and <span style="color:#dde00d">unread</span>. <span style="color:#e8640c">If you run this command without a `mailboxList.json` file it will assume that you do not have the needed mailbox ID and will prompt you to run the command to create the file and exit.</span>
 
 ><span style="color:#3b98bf">NOTE:</span> The `clientResourcesFolder` folder is automatically created if one does not exist upon running this command.
+
+><span style="color:#ed2213;font-weight:bold">WARNING:</span> Some files listed may not have been delivered to the client and you will be unable to download them. This is because the user account mapped to the client was not a member of the mailbox you are getting these messages from at the time the message was delivered to the mailbox.
 
 <br /> 
 
 <br />
 
 ```
-./getMessagesByDateRange
+./bashGetMessagesByDateRange
 ```
 
 <br /> 
@@ -463,12 +523,14 @@ These commands will be used to retrieve unread messages and date ranged messages
 
 ><span style="color:#3b98bf">NOTE:</span> The `clientResourcesFolder` folder is automatically created if one does not exist upon running this command.
 
+><span style="color:#ed2213;font-weight:bold">WARNING:</span> Some files listed may not have been delivered to the client and you will be unable to download them. This is because the user account mapped to the client was not a member of the mailbox you are getting these messages from at the time the message was delivered to the mailbox.
+
 <br /> 
 
 <br />
 
 ```
-./getMessagesByDateRange -m <mailboxId> -f <fromDate> -t <toDate> -s <status>
+./bashGetMessagesByDateRange -m <mailboxId> -f <fromDate> -t <toDate> -s <status>
 ```
 
 <br /> 
@@ -499,12 +561,14 @@ These commands will be used to retrieve unread messages and date ranged messages
 
 ><span style="color:#3b98bf">NOTE:</span> The `clientResourcesFolder` folder is automatically created if one does not exist upon running this command.
 
+><span style="color:#ed2213;font-weight:bold">WARNING:</span> Some files listed may not have been delivered to the client and you will be unable to download them. This is because the user account mapped to the client was not a member of the mailbox you are getting these messages from at the time the message was delivered to the mailbox.
+
 <br /> 
 
 <br />
 
 ```
-./getMessagesByDateRange -m <mailboxId> -f <fromDate> -t <toDate> -s <status> -p
+./bashGetMessagesByDateRange -m <mailboxId> -f <fromDate> -t <toDate> -s <status> -p
 ```
 
 <br /> 
@@ -527,9 +591,9 @@ These commands will be used to retrieve unread messages and date ranged messages
 
 <br />
 
-**Getting unread messages using `./getMessagesByDateRange2`**
+**Getting unread messages using `./bashGetDeliveredFilesByDateRange`**
 
->The below commands do the exact same thing as the `./getMessagesByDateRange` command `./getMessagesByDateRange2` just uses the `files/<mailboxId>` route rather than the `/messages/<mailboxId>` route.
+>The below commands do the exact same thing as the `./getMessagesByDateRange` command with the exception that they only get messages that were delivered to the client and are readily downloadable by the client. `It is recommended that you use this command as the primary command for getting messages by date range as it will only return messages that were delivered to the client.`
 
 ><span style="color:#3b98bf">NOTE:</span> The `clientResourcesFolder` folder is automatically created if one does not exist upon running these commands.
 
@@ -538,7 +602,7 @@ These commands will be used to retrieve unread messages and date ranged messages
 <br />
 
 ```
-./getMessagesByDateRange2
+./bashGetDeliveredFilesByDateRange
 ```
 
 <br /> 
@@ -550,7 +614,7 @@ These commands will be used to retrieve unread messages and date ranged messages
 <br />
 
 ```
-./getMessagesByDateRange2 -m <mailboxId> -f <fromDate> -t <toDate> -s <status> -p
+./bashGetDeliveredFilesByDateRange -m <mailboxId> -f <fromDate> -t <toDate> -s <status> -p
 ```
 
 <br /> 
@@ -568,7 +632,7 @@ These commands will be used to retrieve unread messages and date ranged messages
 <br />
 
 ```
-./downloadFile
+./bashDownloadFile
 ```
 
 <br /> 
@@ -609,7 +673,7 @@ The commands below will be used to download files as well as marking them as rea
 <br />
 
 ```
-./downloadFile -m <messageId>
+./bashDownloadFile -m <messageId>
 ```
 
 <br /> 
@@ -645,7 +709,7 @@ The commands below will be used to download files as well as marking them as rea
 <br />
 
 ```
-./downloadFile -m <messageId> -r
+./bashDownloadFile -m <messageId> -r
 ```
 
 <br /> 
@@ -679,7 +743,7 @@ The commands below will be used to download files as well as marking them as rea
 <br />
 
 ```
-./markAsRead
+./bashMarkAsRead
 ```
 
 <br /> 
@@ -711,7 +775,7 @@ The commands below will be used to download files as well as marking them as rea
 <br />
 
 ```
-./markAsRead -m <messageId>
+./bashMarkAsRead -m <messageId>
 ```
 
 <br /> 

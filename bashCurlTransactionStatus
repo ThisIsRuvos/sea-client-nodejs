@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #include
-. token
-. ./transactionId
+. bashToken
+. ./bashTransactionId
 
 #Bold colors
 BWHITE='\033[1;37m'

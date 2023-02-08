@@ -1,0 +1,83 @@
+#!/bin/bash
+
+
+#Bold colors
+BWHITE='\033[1;37m'
+BGREEN='\033[1;32m'
+BRED='\033[1;31m'
+BYELLOW='\033[1;33m'
+BBLUE='\033[1;34m'
+UBLUE='\033[4;34m' #Underline blue
+NC='\033[0m' # No color
+
+choices=("1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "12")
+
+userChoice=
+choiceExists=false
+
+
+echo -e "\n\n${BBLUE}####################################################################################################${NC}"
+echo -e "${BBLUE}#                                                                                                  #${NC}"
+echo -e "${BBLUE}#                                ${BGREEN}STEVE External API Testing Menu                                   ${BBLUE}#${NC}"
+echo -e "${BBLUE}#                                                                                                  #${NC}"
+echo -e "${BBLUE}#      ${BYELLOW}1 - ${BWHITE}Get Outbound Routes      ${BYELLOW}7 - ${BWHITE}Get All Unread Messages Delivered to Client in Mailbox     ${BBLUE}#${NC}"
+echo -e "${BBLUE}#                                                                                                  #${NC}"
+echo -e "${BBLUE}#      ${BYELLOW}2 - ${BWHITE}Open Transaction         ${BYELLOW}8 - ${BWHITE}Get All Unread Messages in Mailbox                         ${BBLUE}#${NC}"
+echo -e "${BBLUE}#                                                                                                  #${NC}"
+echo -e "${BBLUE}#      ${BYELLOW}3 - ${BWHITE}Send File                ${BYELLOW}9 - ${BWHITE}Get All Messages Delivered to Client in Date Range         ${BBLUE}#${NC}"
+echo -e "${BBLUE}#                                                                                                  #${NC}"
+echo -e "${BBLUE}#      ${BYELLOW}4 - ${BWHITE}Check Transaction status ${BYELLOW}10 - ${BWHITE}Get All Messages in Date Range                            ${BBLUE}#${NC}"
+echo -e "${BBLUE}#                                                                                                  #${NC}"
+echo -e "${BBLUE}#      ${BYELLOW}5 - ${BWHITE}Close Transaction        ${BYELLOW}11 - ${BWHITE}Download Message With Option to Mark Read                 ${BBLUE}#${NC}"
+echo -e "${BBLUE}#                                                                                                  #${NC}"
+echo -e "${BBLUE}#      ${BYELLOW}6 - ${BWHITE}Create Mailbox List      ${BYELLOW}12 - ${BWHITE}Mark Message as Read                                      ${BBLUE}#${NC}"
+echo -e "${BBLUE}#                                                                                                  #${NC}"
+echo -e "${BBLUE}####################################################################################################${NC}"
+
+read -p "$(echo -e "\n                            ${BYELLOW}Please enter number for testing option${BWHITE}:${NC} ")" userChoice
+echo ""
+
+for ((i=0; i<${#choices[@]}; i++)); do
+
+  if [ "${choices[i]}" = "$userChoice" ]
+  then
+    choiceExists=true
+  else
+    doNothing=    
+  fi
+
+done
+
+if [ "$choiceExists" = true ]
+then
+
+  case $userChoice in
+
+    1) ./bashCurlGetOutboundRoutes;;
+
+    2) ./bashCurlOpenTransaction;;
+
+    3) ./bashPutFile;;
+
+    4) ./bashCurlTransactionStatus;;
+
+    5) ./bashCurlCloseTransaction;;
+
+    6) ./bashCreateMailboxListJSONFile;;
+
+    7) ./bashCurlGetUnread;;
+
+    8) ./bashCurlGetUnread2;;
+
+    9) ./bashGetDeliveredFilesByDateRange;;
+
+    10) ./bashGetMessagesByDateRange;;
+
+    11) ./bashDownloadFile;;
+
+    12) ./bashMarkAsRead;;
+
+  esac
+else
+  echo -e "${BRED}ERROR: You have entered an invalid choice please run script again and enter a valid choice of 1 - 12${NC}\n"
+fi

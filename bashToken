@@ -1,8 +1,8 @@
 #!/bin/bash
 
-. tokenConfig
+. bashTokenConfig
 
-t=$(./curlGetToken)
+t=$(./bashCurlGetToken)
 
 token=$(cut -d '"' -f4 <<< $t)
 envUrl=$(grep seaBaseUrl secrets.json)

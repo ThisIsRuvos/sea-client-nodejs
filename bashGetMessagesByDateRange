@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #include
-. token
-. checkForCRFolder
+. bashToken
+. bashCheckForCRFolder
 
 #Bold colors
 BWHITE='\033[1;37m'
@@ -56,8 +56,8 @@ done
 #Check if error exists, display message to run command for getting mailboxes if mailboxList.json file does not exist
 if [[ "$lsError" == " No such file or directory" ]] && ! [[ $mailboxId ]]
 then
-  echo -e "\n${BWHITE}\"sea-client-nodejs/clientResourcesFolder/mailboxList.json\"${BYELLOW} does not currently exist to pull a ${BWHITE}mailboxId ${BYELLOW}from ${BBLUE}${UBLUE}please run the below command to pull mailboxes associated with this client before running this commmand again${NC}${BYELLOW}:"
-  echo -e "\n\n${BWHITE}Command: ${BGREEN}./createMailboxListJSONFile\n"
+  echo -e "\n${BWHITE}\"sea-client-nodejs/clientResourcesFolder/mailboxList.json\"${BYELLOW} does not currently exist to pull a ${BWHITE}mailboxId ${BYELLOW}from ${BBLUE}${UBLUE}please run the below command to pull mailboxes associated with this client before running this commmand again${NC}${BYELLOW} or enter ${BWHITE}6${BYELLOW} from Menu options when you run ${BGREEN}./bashMenu${BYELLOW}:"
+  echo -e "\n\n${BWHITE}Command: ${BGREEN}./bashCreateMailboxListJSONFile\n"
   exit 1
 fi
 
@@ -95,7 +95,7 @@ done
 
 #POST to get messages for date range the user input and set dateRangedMessages variable to output
 dateRangedMessages=$(curl -X 'POST' \
-  "$envUrl/inbound/files/$mailboxId" \
+  "$envUrl/inbound/messages/$mailboxId" \
   -H 'accept: application/json' \
   -H "Authorization: Bearer $token" \
   -H 'Content-Type: application/json' \
@@ -116,8 +116,8 @@ if [ "$errorMessage" == "mailboxId must be a uuid" ]
 then
   echo -e "\n${BRED}ERROR: You entered an invalid mailbox ID!"
   echo -e "\n\n${BYELLOW}Please run command again and enter a valid mailbox ID from ${BWHITE}\"sea-client-nodejs/$checkFolder/mailboxList.json\"${BYELLOW}."
-  echo -e "\n\n${UBLUE}If ${NC}${BWHITE}\"sea-client-nodejs/$checkFolder/mailboxList.json\" ${UBLUE}does not currently exist then you can run the following command to generate it:"
-  echo -e "\n\n${NC}${BWHITE}Command: ${BGREEN}./createMailboxListJSONFile\n${NC}"
+  echo -e "\n\n${UBLUE}If ${NC}${BWHITE}\"sea-client-nodejs/$checkFolder/mailboxList.json\" ${UBLUE}does not currently exist then you can run the following command to generate it or enter ${BWHITE}6${BBLUE} from Menu options when you run ${BGREEN}./bashMenu${BBLUE}:"
+  echo -e "\n\n${NC}${BWHITE}Command: ${BGREEN}./bashCreateMailboxListJSONFile\n${NC}"
   exit 1
 
 #If errorMessage string is equal to "startDate should be valid and must match YYYY-MM-DD" then echo ERROR statement 

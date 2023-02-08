@@ -1,14 +1,16 @@
 #!/bin/bash
 
 #include
-. token
-. checkForCRFolder
+. bashToken
+. bashCheckForCRFolder
 
 #Bold colors
 BWHITE='\033[1;37m'
 BGREEN='\033[1;32m'
 BRED='\033[1;31m'
 BYELLOW='\033[1;33m'
+BBLUE='\033[1;34m'
+UBLUE='\033[4;34m'
 NC='\033[0m' # No color
 
 #Option for file type
@@ -78,5 +80,7 @@ then
 
 #Else echo ERROR statement and list valid file types and example command
 else
-  echo -e "${BRED}\nERROR: That is an invalid File Type! Please run command again with a valid file type.\n\n${BYELLOW}############### Valid File Types ###############\n\n-BirthInfantDeath\n-FetalDeath\n-ITOP\n-Mortality\n-Natality\n-Roster\n-Other\n\n${BWHITE}Example: ${BGREEN}./curlGetOutboundRoutes -f Mortality\n"
+  echo -e "${BRED}\nERROR: That is an invalid File Type! Please run command again with a valid file type.\n\n${BYELLOW}############### Valid File Types ###############\n\n-BirthInfantDeath\n-FetalDeath\n-ITOP\n-Mortality\n-Natality\n-Roster\n-Other\n\n${BWHITE}Example: ${BGREEN}./bashCurlGetOutboundRoutes -f Mortality\n"
+  echo -e "\n\n${NC}${BYELLOW}OR...${NC}"
+  echo -e "\n\n${NC}${BWHITE}Run this command and enter ${BBLUE}1${BWHITE} from Menu options: ${BGREEN}./bashMenu\n${NC}"
 fi
